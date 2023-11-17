@@ -1,0 +1,92 @@
+#register {
+  width: 100vw;
+  height: 100vh;
+  .wrapper {
+    width: 100%;
+    height: 100%;
+
+    .header {
+      padding: 0 6.95vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: 10%;
+      img {
+        height: 100%;
+      }
+      a {
+        color: #45c3d2;
+        font-size: 1.25vw;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+      }
+    }
+    .content {
+      height: 90%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image: url(../../assets/images/Bg-login.jpg);
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+
+      .form {
+        height: 58vh;
+        background-color: #fff;
+        padding: 3vw;
+        border-radius: 1vw;
+
+        >p {
+          font-size: 2.5vw;
+          font-style: normal;
+          font-weight: 600;
+          line-height: normal;
+          margin-bottom: 1vw;
+          display: flex;
+          justify-content: center;
+        }
+        .signin {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 2vw;
+
+          p {
+            color: black;
+            font-size: 1.11vw;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            margin-right: 0.5vw;
+          }
+
+          .dangnhap {
+            color: #45c3d2;
+            font-size: 1.11vw;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+          }
+
+          .dangnhap:hover {
+            text-decoration: underline;
+          }
+        }
+        .submit {
+          background-color: #45c3d2;
+          border: none;
+          color: #fff;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          font-size: 1.11vw;
+          font-style: normal;
+          font-weight: 500;
+          line-height: normal;
+        }
+      }
+    }
+  }
+}
