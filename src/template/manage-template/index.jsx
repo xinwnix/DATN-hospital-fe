@@ -6,9 +6,14 @@ function ManageTemplate(props) {
   const { title, callbackAdd, columns, dataSource, searchText } = props;
   const [searchValue, setSearchValue] = useState("");
   const [data, setData] = useState(dataSource);
+  const isYeuCauTitle = title === "yêu cầu";
 
   useEffect(() => {
-    setData(dataSource?.filter((item) => item.name.toLowerCase().includes(searchValue.toLowerCase())));
+    setData(
+      dataSource?.filter((item) =>
+        item.name.toLowerCase().includes(searchValue.toLowerCase())
+      )
+    );
   }, [searchValue]);
 
   useEffect(() => {
@@ -27,9 +32,11 @@ function ManageTemplate(props) {
         />
       )}
       <Row style={{ justifyContent: "flex-end", marginBottom: 20 }}>
-        <Button onClick={callbackAdd} type="primary">
-          Thêm {title}
-        </Button>
+        {isYeuCauTitle ? null : (
+          <Button onClick={callbackAdd} type="primary">
+            Thêm {title}
+          </Button>
+        )}
       </Row>
       <Table dataSource={data} columns={columns} />
     </div>
@@ -37,3 +44,4 @@ function ManageTemplate(props) {
 }
 
 export default ManageTemplate;
+

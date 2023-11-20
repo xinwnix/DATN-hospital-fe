@@ -1,15 +1,36 @@
 import classes from "./Login.module.scss"
 import logo from "../../assets/images/logo.png"
 import { Button, Form, Input, notification } from "antd";
-
-import { Link } from "react-router-dom";
-
+import myAxios from "../../config/config";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
-    // const [api, contextHolder] = notification.useNotification();
+    const [api, contextHolder] = notification.useNotification();
+    const navigate = useNavigate();
+
+    const onFinish = async (values) => {
+        try {
+            const response = await myAxios.post("/login", values);
+            localStorage.setItem("account", JSON.stringify(response.data.data));
+
+            if (response.data.data.accountType === "PATIENT") {
+                navigate("/patient");
+            }
+            if (response.data.data.accountType === "DOCTOR") {
+                navigate("/doctor");
+            }
+            if (response.data.data.accountType === "ADMIN") {
+                navigate("/admin");
+            }
+        } catch (e) {
+            api["error"]({
+                message: e.response.data,
+            });
+        }
+    };
     return (
         <div id={classes["login"]}>
-            {/* {contextHolder} */}
+            {contextHolder}
             <div className={classes["wrapper"]}>
                 <div className={classes["header"]}>
                     <img src={logo} />
@@ -22,30 +43,40 @@ function Login() {
                             <p>Bạn chưa có tài khoản?</p>
                             <Link to={"/register"} className={classes["dangky"]}>Đăng ký ngay.</Link>
                         </div>
-                        <Form>
+                        <Form
+                            name="basic"
+                            labelCol={{ span: 8 }}
+                            wrapperCol={{ span: 16 }}
+                            initialValues={{ remember: true }}
+                            onFinish={onFinish}
+                            autoComplete="off"
+                        >
                             <Form.Item
+                                labelAlign="left"
+                                label="Phone or email"
                                 name="phone"
-                                rules={[{ required: true, message: "Please input your phone number or email!" }]}
+                                rules={[{ required: true, message: "Please input your username!" }]}
                             >
-                                <label style={{ fontSize: 18, display: "flex" }}>Phone number or Email(<p style={{ color: "red" }}>*</p>):</label>
                                 <Input className={classes["account"]} placeholder="Số điện thoại hoặc Email" />
                             </Form.Item>
+
                             <Form.Item
+                                labelAlign="left"
+                                label="Password"
                                 name="password"
                                 rules={[{ required: true, message: "Please input your password!" }]}
                             >
-                                <label style={{ fontSize: 18, display: "flex" }}>Password(<p style={{ color: "red" }}>*</p>):</label>
                                 <Input.Password className={classes["password"]} placeholder="Mật khẩu" />
                             </Form.Item>
-                            <Form.Item style={{ display: "flex", justifyContent: "center" }} >
+                            <Form.Item wrapperCol={{ offset: 8, span: 16 }} style={{ display: "flex", justifyContent: "center" }}>
                                 <Button type="primary" htmlType="submit" className={classes["submit"]}>
                                     Đăng nhập
                                 </Button>
                             </Form.Item>
                         </Form>
                         <div className={classes["reset"]}>
-                            <p href="#">Quên mật khẩu?</p>
-                            <a href="#">Đặt lại mật khẩu.</a>
+                            <p>Quên mật khẩu?</p>
+                            <Link to={"/forget-password"}>Đặt lại mật khẩu.</Link>
                         </div>
                     </div>
                 </div>

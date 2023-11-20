@@ -1,31 +1,61 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Select, DatePicker, Button, Row, Col, Tabs, notification } from "antd";
 import PageTemplate from "../../../template/page-template";
+import useUserInformation from "../../../hooks/useUserInformation";
+import myAxios from "../../../config/config";
+import dayjs from "dayjs";
 import { UserOutlined, MailOutlined, PhoneOutlined, HomeOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
-import moment from "moment";
 import classes from "./index.scss"
+const { Option } = Select;
 
-
-const ProfileUpdateForm = () => {
-  const { Option } = Select;
-  const disabledDate = (current) => {
-    // Lấy ngày hiện tại và trừ đi 10 năm
-    const tenYearsAgo = moment().subtract(10, "years");
-    // Nếu ngày hiện tại cách ngày hôm nay 10 năm trở lại trở đi, trả về true để vô hiệu hóa ngày đó
-    return current && current > tenYearsAgo;
-  };
+const ProfileUpdateForm = ({ initialValues, onSubmit }) => {
   const [form] = Form.useForm();
   const [form2] = Form.useForm();
-  const labelCol = { span: 8, style: { width: "120px", color: "#45c3d2" } };
+  const { userInformation } = useUserInformation();
+  const [profile, setProfile] = useState();
+  const labelCol = { span: 8, style: { width: "120px" } };
+  const [api, contextHolder] = notification.useNotification();
+
+  const onFinish = async (values) => {
+    const formattedDate = dayjs(values.dateOfBirth).format("DD/MM/YYYY");
+    values.id = userInformation.id;
+    values.password = "123";
+    // values.dateOfBirth = formattedDate;
+    const response = await myAxios.put(`/profile`, values);
+    api["success"]({
+      message: response.data.message,
+    });
+  };
+
+  const handleChangePassword = async (values) => {
+    console.log(values);
+    const response = await myAxios.put(`/password/${userInformation.id}`, {
+      newPassword: values.newPassword,
+    });
+    api["success"]({
+      message: response.data.message,
+    });
+  };
+
+  useEffect(() => {
+    const fetch = async () => {
+      const response = await myAxios.get(`/account/${userInformation.id}`);
+      setProfile(response.data.data);
+
+      response.data.data.dateOfBirth = dayjs(response.data.data.dateOfBirth);
+
+      form.setFieldsValue(response.data.data);
+    };
+    userInformation && fetch();
+  }, []);
 
   const items = [
     {
       label: "Thông tin cá nhân",
       key: 1,
       children: (
-        <Form name="registrationForm" form={form} scrollToFirstError autoComplete="off">
-
+        <Form name="registrationForm" form={form} onFinish={onFinish} scrollToFirstError autoComplete="off">
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
@@ -33,11 +63,11 @@ const ProfileUpdateForm = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please enter your full name!",
+                    message: "Vui lòng nhập tên đầy đủ của bạn!",
                   },
                 ]}
               >
-                <Input prefix={<UserOutlined />} placeholder="Tên đầy đủ" />
+                <Input prefix={<UserOutlined />} placeholder="Họ và tên" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -46,11 +76,11 @@ const ProfileUpdateForm = () => {
                 rules={[
                   {
                     type: "email",
-                    message: "Please enter a valid email!",
+                    message: "Vui lòng nhập email hợp lệ!",
                   },
                   {
                     required: true,
-                    message: "Please enter your email!",
+                    message: "Vui lòng nhập email của bạn!",
                   },
                 ]}
               >
@@ -66,11 +96,11 @@ const ProfileUpdateForm = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please enter your phone number!",
+                    message: "Xin vui lòng điền số điện thoại của bạn!",
                   },
                 ]}
               >
-                <Input prefix={<PhoneOutlined />} placeholder="Số diện thoại" />
+                <Input prefix={<PhoneOutlined />} placeholder="Số điện thoại" />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -79,11 +109,11 @@ const ProfileUpdateForm = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select your gender!",
+                    message: "Vui lòng chọn giới tính của bạn!",
                   },
                 ]}
               >
-                <Select placeholder="Giới tính">
+                <Select placeholder="Chọn giới tính của bạn">
                   <Option value="MALE">Male</Option>
                   <Option value="FEMALE">Female</Option>
                 </Select>
@@ -95,11 +125,11 @@ const ProfileUpdateForm = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select your date of birth!",
+                    message: "Vui lòng chọn ngày sinh của bạn!",
                   },
                 ]}
               >
-                <DatePicker disabledDate={disabledDate} placeholder="Ngày/Tháng/Năm sinh" style={{ width: "100%" }} format={"DD/MM/YYYY"} />
+                <DatePicker placeholder="Ngày sinh" style={{ width: "100%" }} format={"DD/MM/YYYY"} />
               </Form.Item>
             </Col>
           </Row>
@@ -118,7 +148,7 @@ const ProfileUpdateForm = () => {
                 <TextArea prefix={<HomeOutlined />} placeholder="Địa chỉ" />
               </Form.Item>
             </Col>
-          </Row >
+          </Row>
           <Row style={{ width: "100%", display: "flex", justifyContent: "end" }}>
             <Form wrapperCol={{ offset: 10, span: 20 }} style={{ marginRight: "-22px" }}>
               <Button type="primary" htmlType="submit" style={{ backgroundColor: "white", color: "black", width: "100px", border: "1px black solid" }}>
@@ -139,6 +169,7 @@ const ProfileUpdateForm = () => {
       key: 2,
       children: (
         <Form
+          onFinish={handleChangePassword}
           form={form2}
           style={{ maxWidth: 500 }}
           labelCol={labelCol}
@@ -148,8 +179,8 @@ const ProfileUpdateForm = () => {
             label="Mật khẩu mới"
             name="newPassword"
             rules={[
-              { required: true, message: "Please enter your new password" },
-              { min: 6, message: "Password must be at least 6 characters long" },
+              { required: true, message: "Vui lòng nhập mật khẩu mới của bạn" },
+              { min: 6, message: "Mật khẩu phải có độ dài ít nhất 6 ký tự" },
             ]}
           >
             <Input.Password />
@@ -161,7 +192,7 @@ const ProfileUpdateForm = () => {
             dependencies={["newPassword"]}
             hasFeedback
             rules={[
-              { required: true, message: "Please confirm your new password" },
+              { required: true, message: "Vui lòng xác nhận mật khẩu mới của bạn" },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue("newPassword") === value) {
@@ -174,7 +205,6 @@ const ProfileUpdateForm = () => {
           >
             <Input.Password />
           </Form.Item>
-
           <Row style={{ width: "100%", display: "flex", justifyContent: "end" }}>
             <Form wrapperCol={{ offset: 10, span: 20 }} style={{ marginRight: "-22px" }}>
               <Button type="primary" htmlType="submit" style={{ backgroundColor: "white", color: "black", width: "100px", border: "1px black solid" }}>
@@ -183,7 +213,7 @@ const ProfileUpdateForm = () => {
             </Form>
             <Form.Item wrapperCol={{ offset: 10, span: 20 }} style={{ marginRight: "42px" }}>
               <Button type="primary" htmlType="submit" style={{ backgroundColor: "#45c3d2", width: "100px" }}>
-                Cập nhật
+                Lưu
               </Button>
             </Form.Item>
           </Row>
@@ -194,6 +224,8 @@ const ProfileUpdateForm = () => {
 
   return (
     <PageTemplate>
+      {contextHolder}
+      <h1 style={{ marginBottom: "20px" }}>Thông tin cá nhân</h1>
       <Tabs tabPosition={"left"} items={items} />
     </PageTemplate>
   );

@@ -6,3 +6,36 @@
   box-sizing: border-box;
   font-family: "Roboto", sans-serif;
 }
+
+:where(.css-dev-only-do-not-override-qgg3xn).ant-input-affix-wrapper:hover {
+  border-color: #45c3d2;
+}
+
+:where(.css-dev-only-do-not-override-qgg3xn).ant-select-single:not(.ant-select-customize-input) .ant-select-selector:hover{
+  border-color: #45c3d2;
+}
+:where(.css-dev-only-do-not-override-qgg3xn).ant-picker:hover {
+  border-color: #45c3d2;
+}
+
+:where(.css-dev-only-do-not-override-qgg3xn).ant-input:hover{
+  border-color: #45c3d2
+}
+
+.ant-btn {
+  background-color: #45c3d2;
+}
+
+:where(.css-dev-only-do-not-override-qgg3xn).ant-btn-primary:not(:disabled):not(.ant-btn-disabled):hover {
+  background-color: #45c3d2;
+  opacity: 0.8;
+}
+
+:where(.css-dev-only-do-not-override-qgg3xn).ant-btn-default {
+  background-color: white;
+}
+
+:where(.css-dev-only-do-not-override-qgg3xn).ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
+  color: #45c3d2;
+  border-color: #45c3d2
+}

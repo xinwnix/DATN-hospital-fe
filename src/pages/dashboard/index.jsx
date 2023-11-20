@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import "./index.scss";
 import { Avatar, Dropdown, Layout, Menu, theme, Tooltip } from "antd";
-import { UserOutlined } from '@ant-design/icons';
 import Sider from "antd/es/layout/Sider";
 import { Content, Header } from "antd/es/layout/layout";
+import useUserInformation from "../../hooks/useUserInformation";
 import logo_dashboard from "../../assets/images/logo_dashboard.png"
+import "./index.scss";
+
 
 function DashBoard({ items }) {
   const navigate = useNavigate();
+  // useEffect(() => {
+  //   let isAuthen = isAllow();
+  //   if (!isAuthen) {
+  //     navigate("/login");
+  //   }
+  // }, []);
+  const { userInformation } = useUserInformation();
 
   const [collapsed, setCollapsed] = useState(false);
   const {
@@ -24,10 +32,9 @@ function DashBoard({ items }) {
   };
 
   const menu = (
-    <Menu>
-      <Menu.Item key="profile">My Profile</Menu.Item>
+    <Menu style={{ marginTop: "-5px" }}>
       <Menu.Item key="logout" onClick={handleLogout}>
-        Logout
+        Đăng xuất
       </Menu.Item>
     </Menu>
   );
@@ -38,23 +45,11 @@ function DashBoard({ items }) {
         <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
           <div className="dashboard__logo">
             <Link to={"/"}>
-              <img style={{ width: "100%" }} src={logo_dashboard} />
+              <img style={{ width: "100%" }} src={logo_dashboard} />{" "}
             </Link>
           </div>
-          <Menu
-            style={{}}
-            theme="dark"
-            selectedKeys={location.pathname.slice(1)}
-            mode="inline"
-            items={items}
-            className="custom-menu"
-          >
-            {items.map((item) => (
-              <Menu.Item key={item.key} className="menu-item-custom" > 
-                <Link to={item.path}>{item.label}</Link>
-              </Menu.Item>
-            ))}
-          </Menu>
+
+          <Menu className="custom-menu" theme="dark" selectedKeys={location.pathname.slice(1)} mode="inline" items={items} />
         </Sider>
         <Layout className="dashboard-layout">
           <Header
@@ -78,9 +73,10 @@ function DashBoard({ items }) {
                     style={{
                       backgroundColor: '#87d068', width: '50px', height: '50px', display: "flex", alignItems: "center", justifyContent: "center"
                     }}
-                    icon={<UserOutlined />}
-                  />
+                  >{userInformation?.fullName.charAt(0).toUpperCase()}</Avatar>
                 </Tooltip>
+
+                {/* <span>{userInformation?.fullName}</span> */}
               </div>
             </Dropdown>
           </Header>
