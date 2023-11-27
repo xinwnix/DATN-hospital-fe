@@ -201,17 +201,17 @@ function OrderDetail({ orderId, disable }) {
               {formatDate(orderDetail?.createdAt, "dd/MM/yyyy HH:mm")}
             </Descriptions.Item>
 
-            <Descriptions.Item label="Patient Full Name">{orderDetail?.patient.fullName}</Descriptions.Item>
-            <Descriptions.Item label="Patient Gender">{orderDetail?.patient.gender}</Descriptions.Item>
-            <Descriptions.Item label="Patient Date of Birth">{orderDetail?.patient.dateOfBirth}</Descriptions.Item>
-            <Descriptions.Item label="Patient Phone">{orderDetail?.patient.phone}</Descriptions.Item>
-            <Descriptions.Item label="Patient Email">{orderDetail?.patient.email}</Descriptions.Item>
-            <Descriptions.Item label="Patient Address">{orderDetail?.patient.address}</Descriptions.Item>
+            <Descriptions.Item label="Tên bệnh nhân">{orderDetail?.patient.fullName}</Descriptions.Item>
+            <Descriptions.Item label="Giới tính">{orderDetail?.patient.gender}</Descriptions.Item>
+            <Descriptions.Item label="Ngày sinh">{orderDetail?.patient.dateOfBirth}</Descriptions.Item>
+            <Descriptions.Item label="Số điện thoại">{orderDetail?.patient.phone}</Descriptions.Item>
+            <Descriptions.Item label="Email">{orderDetail?.patient.email}</Descriptions.Item>
+            <Descriptions.Item label="Địa chỉ">{orderDetail?.patient.address}</Descriptions.Item>
 
-            <Descriptions.Item label="Doctor Full Name">{orderDetail?.doctor.fullName}</Descriptions.Item>
+            <Descriptions.Item label="Tên bác sĩ">{orderDetail?.doctor.fullName}</Descriptions.Item>
 
             {orderDetail?.results.length > 0 && (
-              <Descriptions.Item label="Test Results" span={2}>
+              <Descriptions.Item label="Tên dịch vụ" span={2}>
                 <ul>
                   {orderDetail?.results.map((result, index) => (
                     <li key={index}>{result.service.name}</li>
@@ -219,11 +219,11 @@ function OrderDetail({ orderId, disable }) {
                 </ul>
               </Descriptions.Item>
             )}
-            <Descriptions.Item label="Note" span={2}>
+            <Descriptions.Item label="Ghi chú" span={2}>
               {orderDetail?.note}
             </Descriptions.Item>
 
-            <Descriptions.Item label="Conclusion" span={2}>
+            <Descriptions.Item label="Kết luận" span={2}>
               {orderDetail?.conclude}
             </Descriptions.Item>
           </Descriptions>
@@ -366,17 +366,6 @@ function OrderDetail({ orderId, disable }) {
               </Row>
             )}
           </Form>
-          {/* <Table columns={columns} dataSource={data} />
-          {!orderDetail?.prescription && !disableEdit && (
-            <Row style={{ justifyContent: "flex-end", marginTop: 20, gap: 20 }}>
-              <Button type="primary" onClick={handleAdd}>
-                Thêm
-              </Button>
-              <Button type="primary" onClick={handleSave}>
-                Lưu
-              </Button>
-            </Row>
-          )} */}
         </Card>
       ),
     },

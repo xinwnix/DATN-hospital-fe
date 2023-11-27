@@ -1,13 +1,13 @@
-import classes from "./Login.module.scss"
-import logo from "../../assets/images/logo.png"
 import { Button, Form, Input, notification } from "antd";
 import myAxios from "../../config/config";
 import { Link, useNavigate } from "react-router-dom";
+import classes from "./Login.module.scss"
+import logo from "../../assets/images/logo.png"
 
 function Login() {
+
     const [api, contextHolder] = notification.useNotification();
     const navigate = useNavigate();
-
     const onFinish = async (values) => {
         try {
             const response = await myAxios.post("/login", values);
@@ -28,6 +28,7 @@ function Login() {
             });
         }
     };
+
     return (
         <div id={classes["login"]}>
             {contextHolder}

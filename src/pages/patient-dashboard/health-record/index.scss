@@ -1,4 +1,21 @@
-#tableRow{
+#tableRow {
     border: 1px black solid;
 }
 
+/* styles.css hoặc file CSS tương ứng */
+.ant-table-tbody>tr:nth-child(odd) {
+    background-color: #dfdede !important;
+}
+
+.ant-table-tbody>tr:nth-child(even) {
+    background-color: #efefef !important;
+}
+
+.ant-table-thead th {
+    font-weight: bold;
+    background-color: #a1a1a1 !important;
+}
+
+.ant-table-tbody > tr:hover {
+    cursor: pointer;
+  }

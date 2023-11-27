@@ -30,7 +30,7 @@ function App() {
         <Route path="forget-password" element={<ForgetPassword />} />
         <Route path="register" element={<Register />} />
 
-        <Route path="patient" element={<PaientDashboard />}>
+        <Route path="patient" element={<PaientDashboard/>}>
           <Route path="profile" element={<Profile />}></Route>
           <Route path="service" element={<ServiceRegister />}></Route>
           <Route path="history" element={<History />}></Route>

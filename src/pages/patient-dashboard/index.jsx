@@ -21,7 +21,7 @@ function PaientDashboard() {
     getItem("Đăng kí dịch vụ", "patient/service", React.createElement(FormOutlined)),
     getItem("Lịch sử", "patient/history", React.createElement(HistoryOutlined)),
   ];
-  return <DashBoard items={items} />;
+  return <DashBoard items={items}/>;
 }
 
 export default PaientDashboard;

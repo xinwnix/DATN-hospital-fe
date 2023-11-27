@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PageTemplate from "../../../template/page-template";
-import { Badge, Calendar, Tooltip } from "antd";
+import { Badge, Calendar, Tooltip, Modal } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import myAxios from "../../../config/config";
 import useUserInformation from "../../../hooks/useUserInformation";
@@ -19,37 +19,6 @@ function Schedule() {
     userInformation && fetch();
   }, []);
 
-  //   const getListData = (value) => {
-  //     console.log(value);
-  //     let listData;
-  //     switch (value.date()) {
-  //       case 8:
-  //         listData = [
-  //           { type: "warning", content: "This is warning event." },
-  //           { type: "success", content: "This is usual event." },
-  //         ];
-  //         break;
-  //       case 10:
-  //         listData = [
-  //           { type: "warning", content: "This is warning event." },
-  //           { type: "success", content: "This is usual event." },
-  //           { type: "error", content: "This is error event." },
-  //         ];
-  //         break;
-  //       case 15:
-  //         listData = [
-  //           { type: "warning", content: "This is warning event" },
-  //           { type: "success", content: "This is very long usual event。。...." },
-  //           { type: "error", content: "This is error event 1." },
-  //           { type: "error", content: "This is error event 2." },
-  //           { type: "error", content: "This is error event 3." },
-  //           { type: "error", content: "This is error event 4." },
-  //         ];
-  //         break;
-  //       default:
-  //     }
-  //     return listData || [];
-  //   };
 
   const getService = (results) => {
     const services = [];
@@ -60,12 +29,13 @@ function Schedule() {
   };
 
   const getListData = (value) => {
+    const formattedValueDate = value.format("YYYY-MM-DD"); // Định dạng ngày của giá trị
     const eventsForDate = schedule.filter((event) => {
-      return value.date() === dayjs(event.testDate).date();
+      const formattedEventDate = dayjs(event.testDate).format("YYYY-MM-DD"); // Định dạng ngày của sự kiện
+      return formattedValueDate === formattedEventDate; // So sánh ngày đã định dạng
     });
 
     const listData = eventsForDate.map((event) => {
-      console.log(event);
       return {
         type: "success",
         content: (
@@ -113,9 +83,53 @@ function Schedule() {
     if (info.type === "month") return monthCellRender(current);
     return info.originNode;
   };
+
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const handleDateClick = (value) => {
+    setSelectedDate(value);
+    setIsModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    setSelectedDate(null);
+  };
+
+  const renderSelectedDateInfo = () => {
+    if (!selectedDate) {
+      return null;
+    }
+
+    const listData = getListData(selectedDate);
+
+    return (
+      <div>
+        <h3>Thông tin ngày {selectedDate.format("DD/MM/YYYY")}:</h3>
+        <ul>
+          {listData.map((item, index) => (
+            <li key={index}>
+              <Badge status={item.type} text={item.content} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
+
   return (
     <PageTemplate>
-      <Calendar cellRender={cellRender} />
+      <Calendar cellRender={cellRender} onSelect={handleDateClick} />
+      <Modal
+        title={`Ngày ${selectedDate ? selectedDate.format("DD/MM/YYYY") : ""}`}
+        open={isModalVisible}
+        onCancel={handleModalClose}
+        footer={null}
+      >
+        {renderSelectedDateInfo()}
+      </Modal>
     </PageTemplate>
   );
 }
