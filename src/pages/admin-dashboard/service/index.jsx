@@ -7,18 +7,30 @@ import { Button, Card, Form, Input, Modal, notification } from "antd";
 import { useForm } from "antd/es/form/Form";
 import Title from "antd/es/typography/Title";
 
+
+import ImgCrop from 'antd-img-crop';
+import { Upload } from 'antd';
+
 import "./index.scss"
 
 function Service() {
   const [api, context] = notification.useNotification();
   const [render, setRender] = useState(0);
   const [services, setServices] = useState([]);
-  const [service, setSetvice] = useState();
+  const [service, setService] = useState();
   const [modal, contextHolder] = Modal.useModal();
   const [showConfirmButton, setShowConfirmButton] = useState(false);
   const [form] = useForm();
 
   const columns = [
+    {
+      title: "Ảnh dịch vụ",
+      key: "image",
+      dataIndex: "image",
+      render: (image) => (
+        <img style={{ width: "100px", height: "50px", objectFit: "cover" }} src={image} alt='khong co anh' />
+      ),
+    },
     {
       title: "Tên dịch vụ",
       key: "name",
@@ -46,7 +58,7 @@ function Service() {
               type="primary"
               onClick={() => {
                 form.setFieldsValue(record);
-                setSetvice(record);
+                setService(record);
               }}
             >
               Cập nhật
@@ -55,7 +67,7 @@ function Service() {
               type="primary"
               danger
               onClick={() => {
-                setSetvice(record);
+                setService(record);
                 setShowConfirmButton(true);
               }}
             >
@@ -70,26 +82,12 @@ function Service() {
   useEffect(() => {
     const fetch = async () => {
       const response = await myAxios.get("/service");
+      console.log(response, "dataget đăng ký dịch vụ");
       setServices(response.data.data);
     };
 
     fetch();
   }, [render]);
-
-  const onFinish = async (values) => {
-    try {
-      const response = await myAxios.post("/service", { ...values, id: service?.id });
-      setRender(render + 1);
-      api.success({
-        message: response.data.message,
-      });
-      setSetvice(null);
-      form.resetFields();
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
 
   const [formattedPrice, setFormattedPrice] = useState('');
 
@@ -101,16 +99,45 @@ function Service() {
     setFormattedPrice(formattedValue);
   };
 
+  //uploade ảnh
+  const [imageUrl, setImageUrl] = useState('');
+
+  const onChange = (e) => {
+    const fileList = e.target.files;
+    if (fileList.length > 0) {
+      const url = URL.createObjectURL(fileList[0]);
+      setImageUrl(url);
+    }
+  };
+
+  const onFinish = async (values) => {
+    try {
+      const response = await myAxios.post("/service", { ...values, id: service?.id, image: imageUrl }); // Gửi đường dẫn ảnh trong request
+
+      setRender(render + 1);
+      api.success({
+        message: response.data.message,
+      });
+      setService(null);
+      form.resetFields();
+      setImageUrl(''); // Đặt lại đường dẫn ảnh sau khi gửi thành công
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <PageTemplate>
       {context}
       {contextHolder}
       <ManageTemplate
-        searchText="Nhập tên dịch vụ nhé"
+        searchText="Nhập tên dịch vụ tìm kiếm"
         callbackAdd={() => {
-          setSetvice({
+          setService({
             id: 0,
+            image: "",
             name: "",
+            price: "",
             description: "",
           });
         }}
@@ -120,15 +147,15 @@ function Service() {
       />
       <Modal
         onCancel={() => {
-          setSetvice(null);
+          setService(null);
           form.resetFields();
         }}
-        visible={service != null && !showConfirmButton}
+        open={service != null && !showConfirmButton}
         footer={[
           <Button
             key="cancelButton"
             onClick={() => {
-              setSetvice(null);
+              setService(null);
               form.resetFields();
             }}
             style={{ width: "100px" }}>
@@ -145,6 +172,13 @@ function Service() {
       >
         <Card title={service?.id == 0 ? "Thêm dịch vụ" : "Cập nhật dịch vụ"}>
           <Form form={form} onFinish={onFinish} labelCol={{ span: 6 }} labelAlign="left">
+            <Form.Item name="image">
+              {service?.id && imageUrl ? (
+                <img style={{ width: "100px" }} src={imageUrl} alt="khong co anh" />
+              ) : null}
+              <input type="file" onChange={onChange} multiple></input>
+            </Form.Item>
+
             <Form.Item label="Tên dịch vụ" name="name" rules={[{ required: true, message: "Please enter a name." }]}>
               <Input />
             </Form.Item>
@@ -178,10 +212,10 @@ function Service() {
       </Modal>
 
       <Modal
-        visible={showConfirmButton}
+        open={showConfirmButton}
         onOk={async () => {
           const response = await myAxios.delete(`/service/${service?.id}`);
-          setSetvice(null);
+          setService(null);
           setRender(render + 1);
           setShowConfirmButton(false);
           api.success({
@@ -189,7 +223,7 @@ function Service() {
           });
         }}
         onCancel={() => {
-          setSetvice(null);
+          setService(null);
           setShowConfirmButton(false);
         }}
       >

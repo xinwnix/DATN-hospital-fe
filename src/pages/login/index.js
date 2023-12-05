@@ -54,18 +54,18 @@ function Login() {
                         >
                             <Form.Item
                                 labelAlign="left"
-                                label="Phone or email"
+                                label="Số điện thoại hoặc email"
                                 name="phone"
-                                rules={[{ required: true, message: "Please input your username!" }]}
+                                rules={[{ required: true, message: "Vui lòng nhập tên người dùng của bạn!" }]}
                             >
                                 <Input className={classes["account"]} placeholder="Số điện thoại hoặc Email" />
                             </Form.Item>
 
                             <Form.Item
                                 labelAlign="left"
-                                label="Password"
+                                label="Mật khẩu"
                                 name="password"
-                                rules={[{ required: true, message: "Please input your password!" }]}
+                                rules={[{ required: true, message: "Vui lòng nhập mật khẩu của bạn!" }]}
                             >
                                 <Input.Password className={classes["password"]} placeholder="Mật khẩu" />
                             </Form.Item>

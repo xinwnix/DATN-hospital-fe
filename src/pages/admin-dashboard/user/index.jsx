@@ -4,7 +4,7 @@ import ManageTemplate from "../../../template/manage-template";
 import myAxios from "../../../config/config";
 import { Button, Col, DatePicker, Form, Input, Modal, Row, Select, Tag, notification } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined, HomeOutlined } from "@ant-design/icons";
+import { UserOutlined, MailOutlined, PhoneOutlined, HomeOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import moment from "moment";
 
@@ -34,22 +34,23 @@ function User() {
     return Promise.reject("Please enter a valid Vietnamese phone number!");
   };
 
-  function generateRandomPassword(length) {
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+=<>?";
-    let password = "";
-
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * charset.length);
-      password += charset.charAt(randomIndex);
-    }
-
-    return password;
-  }
+  // function generateRandomPassword(length) {
+  //   const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+=<>?";
+  //   let password = "";
+  //   for (let i = 0; i < length; i++) {
+  //     const randomIndex = Math.floor(Math.random() * charset.length);
+  //     password += charset.charAt(randomIndex);
+  //   }
+  //   return password;
+  // }
 
   const onFinish = async (values) => {
     try {
-      values.password = generateRandomPassword(8);
+      // values.password = generateRandomPassword(8);
+      values.password = "123456";
+      console.log(`before post: ${values}`);
       const response = await myAxios.post("/register", values);
+      console.log(`after post: ${response}`)
       users.push(response.data.data);
       setUsers([...users]);
       form.resetFields();
@@ -102,10 +103,10 @@ function User() {
 
   const fetch = async () => {
     const response = await myAxios.get("/accounts");
-    console.log(response.data.data);
     setUsers(response.data.data);
   };
-  const disabledDate = (current)=>{
+  
+  const disabledDate = (current) => {
     const tenYearsAgo = moment().subtract(10, 'years');
     return current && current > tenYearsAgo;
   }
@@ -126,19 +127,19 @@ function User() {
         }}
       />
 
-      <Modal 
-      title="New user" 
-      open={isModalOpen} 
-      onOk={handleOk} 
-      onCancel={handleCancel} 
-      footer={[
-        <Button key="cancelButton" onClick={handleCancel} style={{ width:"100px" }}>
-          Hủy
-        </Button>,
-        <Button key="okButton" onClick={handleOk} type="primary" style={{ width:"100px" }}>
-          Xác nhận
-        </Button>,
-      ]}
+      <Modal
+        title="New user"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="cancelButton" onClick={handleCancel} style={{ width: "100px" }}>
+            Hủy
+          </Button>,
+          <Button key="okButton" onClick={handleOk} type="primary" style={{ width: "100px" }}>
+            Xác nhận
+          </Button>,
+        ]}
       >
         <Form name="registrationForm" form={form} onFinish={onFinish} scrollToFirstError autoComplete="off">
           <Row gutter={16}>
@@ -223,7 +224,6 @@ function User() {
           </Row>
 
           <Row gutter={16}>
-            {/* Add additional fields here */}
             <Col span={24}>
               <Form.Item
                 name="accountType"
@@ -243,7 +243,6 @@ function User() {
           </Row>
 
           <Row gutter={16}>
-            {/* Add additional fields here */}
             <Col span={24}>
               <Form.Item
                 name="address"

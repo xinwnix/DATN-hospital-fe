@@ -20,6 +20,7 @@ function PaientDashboard() {
     getItem("Hồ sơ sức khỏe", "patient/health", React.createElement(HeartOutlined)),
     getItem("Đăng kí dịch vụ", "patient/service", React.createElement(FormOutlined)),
     getItem("Lịch sử", "patient/history", React.createElement(HistoryOutlined)),
+    getItem("chitieest", "patient/service-detail", React.createElement(HistoryOutlined)),
   ];
   return <DashBoard items={items}/>;
 }

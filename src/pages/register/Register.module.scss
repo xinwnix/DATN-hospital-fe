@@ -1,6 +1,7 @@
 #register {
   width: 100vw;
   height: 100vh;
+
   .wrapper {
     width: 100%;
     height: 100%;
@@ -12,9 +13,11 @@
       align-items: center;
       width: 100%;
       height: 10%;
+
       img {
         height: 100%;
       }
+
       a {
         color: #45c3d2;
         font-size: 1.25vw;
@@ -23,6 +26,7 @@
         line-height: normal;
       }
     }
+
     .content {
       height: 90%;
       display: flex;
@@ -34,6 +38,7 @@
       background-size: cover;
 
       .form {
+        width: 40vw;
         height: 58vh;
         background-color: #fff;
         padding: 3vw;
@@ -48,6 +53,7 @@
           display: flex;
           justify-content: center;
         }
+
         .signin {
           display: flex;
           justify-content: center;
@@ -73,6 +79,7 @@
           .dangnhap:hover {
             text-decoration: underline;
           }
+          
         }
         .submit {
           background-color: #45c3d2;

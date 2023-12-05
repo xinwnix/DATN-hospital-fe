@@ -23,6 +23,7 @@ function AdminDashboard() {
     getItem("Đặt lịch", "admin/order", React.createElement(FileDoneOutlined)),
     getItem("Dịch vụ", "admin/service", React.createElement(GlobalOutlined)),
     getItem("Thuốc", "admin/medicine", React.createElement(MedicineBoxOutlined)),
+    getItem("Doanh thu", "admin/statistical", React.createElement(MedicineBoxOutlined)),
   ];
   return <DashBoard items={items} />;
 }

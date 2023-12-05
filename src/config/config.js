@@ -19,6 +19,5 @@ const handleError = (error) => {
   return config;
 };
 myAxios.interceptors.request.use(handleBefore, null);
-// myAxios.interceptors.response.use(null, handleError);
 
 export default myAxios;

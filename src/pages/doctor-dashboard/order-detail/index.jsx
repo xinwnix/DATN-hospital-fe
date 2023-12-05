@@ -87,8 +87,6 @@ function OrderDetail({ orderId, disable }) {
             showSearch
             placeholder="Chọn loại thuốc"
             optionFilterProp="children"
-            // onChange={onChange}
-            // onSearch={onSearch}
             filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
             options={medicine}
           />
@@ -302,6 +300,7 @@ function OrderDetail({ orderId, disable }) {
             disabled={disableEdit}
             form={formPrescriptions}
             onFinish={async (values) => {
+              console.log(values,">>>>>>>>>>>>>>>>>>valuessssssssssssssss");
               const response = await myAxios.post(`/prescription/${param.orderId}`, values);
               setRender(render + 1);
               api.success({

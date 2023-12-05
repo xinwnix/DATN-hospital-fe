@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "./index.scss";
 import { Await, Link, useNavigate } from "react-router-dom";
 import { Button, Col, DatePicker, Form, Input, Row, Select, notification } from "antd";
 import myAxios from "../../config/config";
@@ -7,12 +6,11 @@ import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined, HomeOutlined, 
 import { auth } from "../../config/firebase";
 import OtpInput from "react-otp-input";
 import moment from "moment";
-
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { useForm } from "antd/es/form/Form";
-
 import classes from "./Register.module.scss"
 import logo from "../../assets/images/logo.png"
+
 export default function Register() {
     const { Option } = Select;
     const [api, contextHolder] = notification.useNotification();
@@ -26,10 +24,10 @@ export default function Register() {
     const [form] = useForm();
     const sendOtp = async () => {
         try {
-            // const response = await myAxios.get(`/check-user/${form.getFieldValue("phone")}`);
-            // api.error({
-            //     message: "This phone number has been registered before!",
-            // });
+            const response = await myAxios.get(`/check-user/${form.getFieldValue("phone")}`);
+            api.error({
+                message: "Số điện thoại này đã được đăng ký trước đó!",
+            });
         } catch (e) {
             let verifier = appVerifier;
             if (!appVerifier) {
@@ -37,8 +35,6 @@ export default function Register() {
                 verifier = new RecaptchaVerifier(auth, "sign-in-button", {
                     size: "invisible",
                     callback: (response) => {
-                        // reCAPTCHA solved, allow signInWithPhoneNumber.
-                        // onSignInSubmit();
                     },
                 });
                 setAppVerifier(verifier);
@@ -46,29 +42,14 @@ export default function Register() {
             try {
                 signInWithPhoneNumber(auth, convertPhoneNumber(form.getFieldValue("phone")), verifier)
                     .then((confirmationResult) => {
-                        // SMS sent. Prompt user to type the code from the message, then sign the
-                        // user in with confirmationResult.confirm(code).
                         window.confirmationResult = confirmationResult;
                         setConfirmationResult(confirmationResult);
                         console.log("success");
                         setIsPhoneInputDisabled(true);
 
-                        // Swal.fire(
-                        //   "Good job!",
-                        //   "Sent OTP Success, Please enter code! ",
-                        //   "success"
-                        // );
-                        // ...
                     })
                     .catch((error) => {
                         console.log(error);
-                        // Error; SMS not sent
-                        // ...
-                        // Swal.fire({
-                        //   icon: "error",
-                        //   title: "Oops...",
-                        //   text: "Something went wrong!",
-                        // });
                     });
             } catch (error) {
                 console.log(error);
@@ -84,26 +65,16 @@ export default function Register() {
         confirmationResult
             .confirm(code)
             .then((result) => {
-                // User signed in successfully.
                 setIsCheckedOTP(true);
 
                 api.success({
-                    message: "Verified otp successfully",
+                    message: "Đã xác minh otp thành công",
                 });
-                // Swal.fire("Good job!", "Good OTP", "success");
-                // ...
             })
             .catch((error) => {
-                // User couldn't sign in (bad verification code?)
-                // ...
                 api.error({
                     message: "Bad OTP",
                 });
-                // Swal.fire({
-                //   icon: "error",
-                //   title: "Oops...",
-                //   text: "Bad OTP",
-                // });
             });
     };
 
@@ -111,7 +82,7 @@ export default function Register() {
         if (!isCheckOTP) {
             api["error"]({
                 message: "Error",
-                description: "Verification otp failed",
+                description: "Xác minh otp không thành công",
             });
             return;
         }
@@ -127,7 +98,7 @@ export default function Register() {
         } catch (e) {
             api["error"]({
                 message: "Duplicate",
-                description: "This email address has been registered previously",
+                description: "Địa chỉ email này đã được đăng ký trước đó",
             });
         }
     };
@@ -164,6 +135,7 @@ export default function Register() {
         setConfirmationResult(false);
     };
 
+
     return (
         <div id={classes["register"]}>
             <div className={classes["wrapper"]}>
@@ -171,12 +143,15 @@ export default function Register() {
                     <img src={logo} />
                     <a href="">Trợ giúp?</a>
                 </div>
+                {contextHolder}
                 <div className={classes["content"]}>
+                    <button id="sign-in-button"></button>
                     <div className={classes["form"]}>
                         <p>Đăng ký</p>
                         <div className={classes["signin"]}>
                             <p>Bạn đã có tài khoản?<Link to={"/login"} className={classes["dangnhap"]}>Đăng nhập ngay.</Link></p>
                         </div>
+
                         <Form form={form} name="registrationForm" onFinish={onFinish} scrollToFirstError autoComplete="off">
                             <Row gutter={16}>
                                 <Col span={12}>
@@ -185,11 +160,11 @@ export default function Register() {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: "Please enter your full name!",
+                                                message: "Vui lòng nhập tên đầy đủ của bạn!",
                                             },
                                         ]}
                                     >
-                                        <Input prefix={<UserOutlined />} placeholder="Full Name" />
+                                        <Input prefix={<UserOutlined />} placeholder="Tên đầy đủ" />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
@@ -198,11 +173,11 @@ export default function Register() {
                                         rules={[
                                             {
                                                 type: "email",
-                                                message: "Please enter a valid email!",
+                                                message: "Vui lòng nhập email hợp lệ!",
                                             },
                                             {
                                                 required: true,
-                                                message: "Please enter your email!",
+                                                message: "Vui lòng nhập email của bạn!",
                                             },
                                         ]}
                                     >
@@ -218,7 +193,7 @@ export default function Register() {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: "Please enter your phone number!",
+                                                message: "Xin vui lòng điền số điện thoại của bạn!",
                                             },
                                             {
                                                 validator: validateVietnamesePhoneNumber,
@@ -230,7 +205,7 @@ export default function Register() {
                                                 <Input
                                                     disabled={isPhoneInputDisabled}
                                                     prefix={<PhoneOutlined />}
-                                                    placeholder="Phone Number"
+                                                    placeholder="Số điện thoại"
                                                     onChange={(e) => {
                                                         setDisable(!validateVietnamesePhoneNumber2(e.target.value));
                                                     }}
@@ -253,7 +228,7 @@ export default function Register() {
                                             rules={[
                                                 {
                                                     required: true,
-                                                    message: "Please enter code!",
+                                                    message: "Vui lòng nhập mã!",
                                                 },
                                             ]}
                                         >
@@ -272,11 +247,11 @@ export default function Register() {
                                     {!isCheckOTP &&
                                         (confirmationResult ? (
                                             <Button style={{ width: "100%" }} onClick={verify}>
-                                                Check OTP
+                                                Kiểm tra OTP
                                             </Button>
                                         ) : (
                                             <Button style={{ width: "100%" }} onClick={sendOtp} disabled={disable}>
-                                                Send OTP
+                                                Gửi OTP
                                             </Button>
                                         ))}
                                 </Col>
@@ -289,11 +264,11 @@ export default function Register() {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: "Please enter your password!",
+                                                message: "Vui lòng nhập mật khẩu của bạn!",
                                             },
                                         ]}
                                     >
-                                        <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+                                        <Input.Password prefix={<LockOutlined />} placeholder="Mật khẩu" />
                                     </Form.Item>
                                 </Col>
                                 <Col span={8}>
@@ -302,13 +277,13 @@ export default function Register() {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: "Please select your gender!",
+                                                message: "Vui lòng chọn giới tính của bạn!",
                                             },
                                         ]}
                                     >
-                                        <Select placeholder="Select your gender">
-                                            <Option value="MALE">Male</Option>
-                                            <Option value="FEMALE">Female</Option>
+                                        <Select placeholder="Chọn giới tính của bạn">
+                                            <Option value="MALE">Nam</Option>
+                                            <Option value="FEMALE">Nữ</Option>
                                         </Select>
                                     </Form.Item>
                                 </Col>
@@ -318,13 +293,13 @@ export default function Register() {
                                         rules={[
                                             {
                                                 required: true,
-                                                message: "Please select your date of birth!",
+                                                message: "Vui lòng chọn ngày sinh của bạn!",
                                             },
                                         ]}
                                     >
                                         <DatePicker
                                             disabledDate={disabledDate}
-                                            placeholder="Date of Birth"
+                                            placeholder="Ngày sinh"
                                             style={{ width: "100%" }}
                                             format={"DD/MM/YYYY"}
                                         />
@@ -333,18 +308,17 @@ export default function Register() {
                             </Row>
 
                             <Row gutter={16}>
-                                {/* Add additional fields here */}
                                 <Col span={24}>
                                     <Form.Item
                                         name="address"
                                         rules={[
                                             {
                                                 required: true,
-                                                message: "Please enter your address!",
+                                                message: "Vui lòng nhập địa chỉ của bạn!",
                                             },
                                         ]}
                                     >
-                                        <Input prefix={<HomeOutlined />} placeholder="Address" />
+                                        <Input prefix={<HomeOutlined />} placeholder="Địa chỉ" />
                                     </Form.Item>
                                 </Col>
                             </Row>

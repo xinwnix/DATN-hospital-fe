@@ -14,6 +14,7 @@ function HealthRecord() {
   useEffect(() => {
     const fetch = async () => {
       const response = await myAxios.get(`/health-record/${userInformation.id}`);
+      console.log("/health-record/${userInformation.id}", response.data);
       setHealthRecord(response.data.data);
     };
 
@@ -95,7 +96,7 @@ function HealthRecord() {
       ),
       closable: true,
       maskClosable: true,
-      onOk() { }, // Hàm này để đóng modal khi nhấn OK, có thể để trống
+      onOk() { },
     });
   };
 

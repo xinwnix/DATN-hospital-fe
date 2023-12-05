@@ -13,6 +13,7 @@ function Schedule() {
   useEffect(() => {
     const fetch = async () => {
       const response = await myAxios.get(`schedule/${userInformation?.id}`);
+      console.log("schedule/${userInformation?.id}", response.data);
       setSchedule(response.data.data);
     };
 
@@ -89,31 +90,46 @@ function Schedule() {
 
   const handleDateClick = (value) => {
     setSelectedDate(value);
-    setIsModalVisible(true);
+    // Kiểm tra xem có sự kiện nào cho ngày này hay không
+    const eventsForDate = getListData(value);
+    if (eventsForDate.length > 0) {
+      setIsModalVisible(true);
+    }
   };
 
   const handleModalClose = () => {
     setIsModalVisible(false);
     setSelectedDate(null);
   };
-
   const renderSelectedDateInfo = () => {
     if (!selectedDate) {
       return null;
     }
-
+  
     const listData = getListData(selectedDate);
-
+  
     return (
       <div>
         <h3>Thông tin ngày {selectedDate.format("DD/MM/YYYY")}:</h3>
-        <ul>
-          {listData.map((item, index) => (
-            <li key={index}>
-              <Badge status={item.type} text={item.content} />
-            </li>
-          ))}
-        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th>Thời gian</th>
+              <th>Dịch vụ khám</th>
+              <th>Tên bệnh nhân</th>
+              {/* Các cột khác nếu cần */}
+            </tr>
+          </thead>
+          <tbody>
+            {listData.map((item, index) => (
+              <tr key={index}>
+                <td>{dayjs(item.testDate).format("DD/MM/YYYY HH:mm:ss")}</td>
+                <td>{getService(item.results)}</td>
+                <td>{item.patient?.fullName || "-"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     );
   };
@@ -123,7 +139,6 @@ function Schedule() {
     <PageTemplate>
       <Calendar cellRender={cellRender} onSelect={handleDateClick} />
       <Modal
-        title={`Ngày ${selectedDate ? selectedDate.format("DD/MM/YYYY") : ""}`}
         open={isModalVisible}
         onCancel={handleModalClose}
         footer={null}
