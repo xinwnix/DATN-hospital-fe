@@ -28,7 +28,7 @@ function Service() {
       key: "image",
       dataIndex: "image",
       render: (image) => (
-        <img style={{ width: "100px", height: "50px", objectFit: "cover" }} src={image} alt='khong co anh' />
+        <img style={{ width: "100px", height: "50px", objectFit: "cover" }} src={image} alt='Không có ảnh' />
       ),
     },
     {
@@ -57,8 +57,15 @@ function Service() {
             <Button
               type="primary"
               onClick={() => {
-                form.setFieldsValue(record);
-                setService(record);
+                form.setFieldsValue(record); // Gán thông tin của dịch vụ vào form
+                setService(record); // Lưu thông tin dịch vụ để cập nhật
+                // Gán thông tin ảnh và fileList của dịch vụ vào state để hiển thị
+                setImageUrl(record.image || '');
+                if (record.image) {
+                  setFileList([{ uid: '-1', name: 'image.png', status: 'done', url: record.image }]);
+                } else {
+                  setFileList([]); // Nếu không có ảnh, xóa fileList để hiển thị '+ Upload'
+                }
               }}
             >
               Cập nhật
@@ -101,12 +108,26 @@ function Service() {
 
   //uploade ảnh
   const [imageUrl, setImageUrl] = useState('');
+  const [fileList, setFileList] = useState([]);
 
-  const onChange = (e) => {
-    const fileList = e.target.files;
-    if (fileList.length > 0) {
-      const url = URL.createObjectURL(fileList[0]);
-      setImageUrl(url);
+  const onChange = (file) => {
+    if (file.fileList.length > 0) {
+      const currentFile = file.fileList[0].originFileObj;
+
+      // Nếu người dùng không chọn ảnh mới mà muốn xóa ảnh hiện tại
+      if (!currentFile) {
+        setImageUrl(''); // Xóa đường dẫn ảnh
+        setFileList([]); // Xóa danh sách file
+        return;
+      }
+
+      const url = URL.createObjectURL(currentFile);
+      // Thực hiện các hành động cần thiết với đường dẫn ảnh
+      setImageUrl(url); // Lưu đường dẫn ảnh
+      setFileList(file.fileList); // Lưu danh sách file
+    } else {
+      setImageUrl(''); // Xóa đường dẫn ảnh nếu không có ảnh nào được chọn
+      setFileList([]); // Xóa danh sách file nếu không có ảnh nào được chọn
     }
   };
 
@@ -121,6 +142,7 @@ function Service() {
       setService(null);
       form.resetFields();
       setImageUrl(''); // Đặt lại đường dẫn ảnh sau khi gửi thành công
+      setFileList([]); // Xóa danh sách file
     } catch (e) {
       console.log(e);
     }
@@ -172,12 +194,23 @@ function Service() {
       >
         <Card title={service?.id == 0 ? "Thêm dịch vụ" : "Cập nhật dịch vụ"}>
           <Form form={form} onFinish={onFinish} labelCol={{ span: 6 }} labelAlign="left">
-            <Form.Item name="image">
-              {service?.id && imageUrl ? (
-                <img style={{ width: "100px" }} src={imageUrl} alt="khong co anh" />
-              ) : null}
-              <input type="file" onChange={onChange} multiple></input>
+            <Form.Item label="Ảnh dịch vụ" name="image">    
+              <ImgCrop rotationSlider>
+                <Upload
+                  action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                  listType="picture-card"
+                  fileList={fileList}
+                  onChange={onChange}
+                >
+                  {fileList.length < 1 && '+ Upload'}
+                </Upload>
+                {service && (
+                  <img style={{ width: '100px', height: '100px', objectFit: 'cover' }} src={imageUrl || service?.image} alt="Không có ảnh" />
+                )}
+              </ImgCrop>
             </Form.Item>
+
+            <Form.Item label="Tên cơ sở"></Form.Item>
 
             <Form.Item label="Tên dịch vụ" name="name" rules={[{ required: true, message: "Please enter a name." }]}>
               <Input />
