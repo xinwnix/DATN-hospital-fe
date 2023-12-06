@@ -3,7 +3,7 @@ import PageTemplate from "../../../template/page-template";
 import ManageTemplate from "../../../template/manage-template";
 import myAxios from "../../../config/config";
 import ButtonGroup from "antd/es/button/button-group";
-import { Button, Card, Form, Input, Modal, notification } from "antd";
+import { Button, Card, Form, Input, Modal, notification, Select } from "antd";
 import { useForm } from "antd/es/form/Form";
 import Title from "antd/es/typography/Title";
 
@@ -27,25 +27,40 @@ function Service() {
       title: "Ảnh dịch vụ",
       key: "image",
       dataIndex: "image",
+      width: 150,
       render: (image) => (
         <img style={{ width: "100px", height: "50px", objectFit: "cover" }} src={image} alt='Không có ảnh' />
       ),
     },
     {
+      title: "Tên cơ sở",
+      key: "facility_name",
+      dataIndex: "facility_name",
+      width: 250,
+    },
+    {
+      title: "Tên bác sĩ",
+      key: "name",
+      dataIndex: "name",
+      width: 250,
+    },
+    {
       title: "Tên dịch vụ",
       key: "name",
       dataIndex: "name",
+      width: 250,
     },
     {
       title: "Giá tiền",
       key: "price",
       dataIndex: "price",
+      width: 200,
     },
     {
       title: "Mô tả",
       key: "description",
       dataIndex: "description",
-      width: 800,
+      width: 300,
     },
     {
       title: "Hành động",
@@ -133,8 +148,10 @@ function Service() {
 
   const onFinish = async (values) => {
     try {
+      console.log(values,">..............................lay data trước khi thêm vào be");
       const response = await myAxios.post("/service", { ...values, id: service?.id, image: imageUrl }); // Gửi đường dẫn ảnh trong request
 
+      console.log(response,"<<<<<<<<<<<<<<<<<<<<<<<<<<<dữ liệu dưới be gửi lên");
       setRender(render + 1);
       api.success({
         message: response.data.message,
@@ -147,6 +164,10 @@ function Service() {
       console.log(e);
     }
   };
+
+
+  //lấy cơ sở vào selection
+  const { Option } = Select;
 
   return (
     <PageTemplate>
@@ -194,7 +215,7 @@ function Service() {
       >
         <Card title={service?.id == 0 ? "Thêm dịch vụ" : "Cập nhật dịch vụ"}>
           <Form form={form} onFinish={onFinish} labelCol={{ span: 6 }} labelAlign="left">
-            <Form.Item label="Ảnh dịch vụ" name="image">    
+            <Form.Item label="Ảnh dịch vụ" name="image">
               <ImgCrop rotationSlider>
                 <Upload
                   action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
@@ -209,8 +230,14 @@ function Service() {
                 )}
               </ImgCrop>
             </Form.Item>
-
-            <Form.Item label="Tên cơ sở"></Form.Item>
+            <Form.Item label="Tên cơ sở" name="facilityac_id">
+              <Select
+                placeholder="Chọn cơ sở"
+              >
+                  <Option>
+                  </Option>
+              </Select>
+            </Form.Item>
 
             <Form.Item label="Tên dịch vụ" name="name" rules={[{ required: true, message: "Please enter a name." }]}>
               <Input />
