@@ -24,6 +24,13 @@ function Service() {
 
   const columns = [
     {
+      title: "Stt",
+      dataIndex: "stt",
+      key: "stt",
+      align: "center",
+      render: (text, record, index) => index + 1,
+    },
+    {
       title: "Ảnh dịch vụ",
       key: "image",
       dataIndex: "image",
@@ -35,13 +42,7 @@ function Service() {
     {
       title: "Tên cơ sở",
       key: "facility_name",
-      dataIndex: "facility_name",
-      width: 250,
-    },
-    {
-      title: "Tên bác sĩ",
-      key: "name",
-      dataIndex: "name",
+      dataIndex: "facilityName",
       width: 250,
     },
     {
@@ -81,10 +82,16 @@ function Service() {
                 } else {
                   setFileList([]); // Nếu không có ảnh, xóa fileList để hiển thị '+ Upload'
                 }
+
+                // Gán giá trị facilityac_id để hiển thị tên cơ sở trong Select
+                const facilityId = record.facility?.id || undefined;
+                form.setFieldsValue({ ...record, facilityac_id: facilityId });
               }}
             >
               Cập nhật
             </Button>
+
+
             <Button
               type="primary"
               danger
@@ -103,9 +110,22 @@ function Service() {
 
   useEffect(() => {
     const fetch = async () => {
-      const response = await myAxios.get("/service");
-      console.log(response, "dataget đăng ký dịch vụ");
-      setServices(response.data.data);
+      try {
+        const response = await myAxios.get("/service");
+        console.log(response,">..............................data service");
+        const responseData = response.data.data;
+
+        if (responseData && responseData.length > 0) {
+          const servicesWithFacilityNames = responseData.map((service) => ({
+            ...service,
+            facilityName: service.facility?.facility_name || 'Unknown Facility',
+          }));
+
+          setServices(servicesWithFacilityNames);
+        }
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      }
     };
 
     fetch();
@@ -148,20 +168,25 @@ function Service() {
 
   const onFinish = async (values) => {
     try {
-      console.log(values,">..............................lay data trước khi thêm vào be");
-      const response = await myAxios.post("/service", { ...values, id: service?.id, image: imageUrl }); // Gửi đường dẫn ảnh trong request
+      const payload = {
+        ...values,
+        facilityac_id: values.facilityac_id, // Chọn cơ sở từ Select và lưu vào facility_id
+        id: service?.id,
+        image: imageUrl,
+      };
 
-      console.log(response,"<<<<<<<<<<<<<<<<<<<<<<<<<<<dữ liệu dưới be gửi lên");
+      const response = await myAxios.post("/service", payload);
+
       setRender(render + 1);
       api.success({
         message: response.data.message,
       });
       setService(null);
       form.resetFields();
-      setImageUrl(''); // Đặt lại đường dẫn ảnh sau khi gửi thành công
-      setFileList([]); // Xóa danh sách file
-    } catch (e) {
-      console.log(e);
+      setImageUrl('');
+      setFileList([]);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -191,7 +216,10 @@ function Service() {
       <Modal
         onCancel={() => {
           setService(null);
+          setShowConfirmButton(false);
           form.resetFields();
+          setImageUrl('');
+          setFileList([]);
         }}
         open={service != null && !showConfirmButton}
         footer={[
@@ -230,12 +258,16 @@ function Service() {
                 )}
               </ImgCrop>
             </Form.Item>
+
             <Form.Item label="Tên cơ sở" name="facilityac_id">
-              <Select
-                placeholder="Chọn cơ sở"
-              >
-                  <Option>
-                  </Option>
+              <Select placeholder="Chọn cơ sở">
+                {services.map(service => (
+                  service.facility && ( // Kiểm tra xem có thông tin về cơ sở không
+                    <Option key={service.facility.id} value={service.facility.id}>
+                      {service.facility.facility_name}
+                    </Option>
+                  )
+                ))}
               </Select>
             </Form.Item>
 

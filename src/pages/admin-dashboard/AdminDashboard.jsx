@@ -19,7 +19,8 @@ function AdminDashboard() {
     }
   }, [user]);
   const items = [
-    getItem("Người dùng", "admin/user", React.createElement(UserOutlined)),
+    getItem("Bệnh nhân", "admin/user", React.createElement(UserOutlined)),
+    getItem("Bác sĩ", "admin/doctor", React.createElement(UserOutlined)),
     getItem("Đặt lịch", "admin/order", React.createElement(FileDoneOutlined)),
     getItem("Dịch vụ", "admin/service", React.createElement(GlobalOutlined)),
     getItem("Thuốc", "admin/medicine", React.createElement(MedicineBoxOutlined)),

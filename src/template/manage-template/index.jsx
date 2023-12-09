@@ -7,6 +7,7 @@ function ManageTemplate(props) {
   const [searchValue, setSearchValue] = useState("");
   const [data, setData] = useState(dataSource);
   const isYeuCauTitle = title === "yêu cầu";
+  const isBenhNhanTitle = title === "Bệnh nhân";
 
   useEffect(() => {
     setData(
@@ -23,21 +24,25 @@ function ManageTemplate(props) {
   return (
     <div className="manage-template">
       <Title>Quản lý {title}</Title>
+      <div style={{display: "flex", width:"100%", justifyContent:"flex-end"}}>
       {searchText && (
         <Input
+        style={{width:"30%", height:"40px", marginRight:"61%"}}
           placeholder={searchText}
           onChange={(e) => {
             setSearchValue(e.target.value);
           }}
         />
       )}
-      <Row style={{ justifyContent: "flex-end", marginBottom: 20 }}>
-        {isYeuCauTitle ? null : (
-          <Button onClick={callbackAdd} type="primary">
+      <Row style={{ marginBottom: 20 }}>
+        {isBenhNhanTitle || isYeuCauTitle ? null : (
+          <Button size="large"  onClick={callbackAdd} type="primary">
             Thêm {title}
           </Button>
         )}
       </Row>
+      </div>
+      
       <Table dataSource={data} columns={columns} />
     </div>
   );

@@ -5,9 +5,9 @@ import useNotification from "./hooks/useNotification";
 import PaientDashboard from "./pages/patient-dashboard";
 import Profile from "./pages/patient-dashboard/profile";
 import ServiceRegister from "./pages/patient-dashboard/service";
-import ServiceDetails from "./pages/patient-dashboard/service/service-details";
 import AdminDashboard from "./pages/admin-dashboard/AdminDashboard";
 import User from "./pages/admin-dashboard/user";
+import Doctor from "./pages/admin-dashboard/doctor";
 import CheckCode from "./pages/check-code";
 import History from "./pages/patient-dashboard/history";
 import Order from "./pages/admin-dashboard/order";
@@ -35,12 +35,12 @@ function App() {
         <Route path="patient" element={<PaientDashboard/>}>
           <Route path="profile" element={<Profile />}></Route>
           <Route path="service" element={<ServiceRegister />}></Route>
-          <Route path="service-detail" element={<ServiceDetails />}></Route>
           <Route path="history" element={<History />}></Route>
           <Route path="health" element={<HealthRecord />}></Route>
         </Route>
         <Route path="admin" element={<AdminDashboard />}>
           <Route path="user" element={<User />}></Route>
+          <Route path="doctor" element={<Doctor />}></Route>
           <Route path="order" element={<Order />}></Route>
           <Route path="service" element={<Service />}></Route>
           <Route path="medicine" element={<Medicine />}></Route>

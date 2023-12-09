@@ -22,6 +22,13 @@ function Order() {
 
   const columns = [
     {
+      title: "Stt",
+      dataIndex: "stt",
+      key: "stt",
+      align: "center",
+      render: (text, record, index) => index + 1,
+    },
+    {
       title: "Ngày kiểm tra",
       dataIndex: "testDate",
       key: "testDate",
@@ -132,8 +139,7 @@ function Order() {
   return (
     <PageTemplate>
       {context}
-      <ManageTemplate
-        title="yêu cầu" columns={columns} dataSource={order} hideAddButton>
+      <ManageTemplate title="yêu cầu" columns={columns} dataSource={order} hideAddButton>
       </ManageTemplate>
     </PageTemplate>
   );

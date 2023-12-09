@@ -18,6 +18,14 @@ function Medicine() {
 
   const columns = [
     {
+      title: "Stt",
+      dataIndex: "stt",
+      key: "stt",
+      width: 100,
+      align: "center",
+      render: (text, record, index) => index + 1,
+    },
+    {
       title: "Tên thuốc",
       key: "name",
       dataIndex: "name",
