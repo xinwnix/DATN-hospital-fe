@@ -1,22 +1,56 @@
 import { Tag } from "antd";
 
 const renderTag = (status) => {
+  let vietnameseStatus = "";
+
   switch (status) {
     case "REJECT":
-      return <Tag color="#ff4d4f">{status}</Tag>;
+      vietnameseStatus = "Từ chối";
+      break;
     case "CONFIRM":
-      return <Tag color="red">{status}</Tag>;
+      vietnameseStatus = "Chờ xác nhận";
+      break;
     case "DONE":
-      return <Tag color="green">{status}</Tag>;
+      vietnameseStatus = "Hoàn thành";
+      break;
     case "IN_PROCESS":
-      return <Tag color="yellow">{status}</Tag>;
+      vietnameseStatus = "Đang xử lý";
+      break;
     case "NORMAL":
-      return <Tag color="yellow">{status}</Tag>;
+      vietnameseStatus = "Yếu";
+      break;
     case "GOOD":
-      return <Tag color="green">{status}</Tag>;
+      vietnameseStatus = "Tốt";
+      break;
     case "ALARM":
-      return <Tag color="red">{status}</Tag>;
+      vietnameseStatus = "Trung bình";
+      break;
     default:
+      break;
+  }
+
+  return <Tag color={getColorBasedOnStatus(status)}>{vietnameseStatus}</Tag>;
+};
+
+const getColorBasedOnStatus = (status) => {
+  switch (status) {
+    case "REJECT":
+      return "#ff4d4f";
+    case "CONFIRM":
+      return "red";
+    case "DONE":
+      return "green";
+    case "IN_PROCESS":
+      return "yellow";
+    case "NORMAL":
+      return "blue"; // Thay đổi màu của NORMAL thành màu xanh
+    case "GOOD":
+      return "green";
+    case "ALARM":
+      return "red";
+    default:
+      return "";
   }
 };
+
 export { renderTag };

@@ -46,18 +46,26 @@ function Doctor() {
 
   const onFinish = async (values) => {
     try {
-      values.password = generateRandomPassword(8);
-      console.log(`before post: ${values}`);
-      const response = await myAxios.post("/register", values);
-      console.log(`after post: ${response}`)
-      users.push(response.data.data);
-      setUsers([...users]);
-      form.resetFields();
-      handleCancel();
-      api["success"]({
-        message: response.data.message,
-      });
+      // Tìm dịch vụ được chọn từ danh sách các dịch vụ
+      const selectedService = service.find(serv => serv.id === values.serviceName);
+      // Nếu dịch vụ được chọn tồn tại
+      if (selectedService) {
+        values.service_id = selectedService.id;
+        values.accountType = "DOCTOR";
+        values.password = generateRandomPassword(8);
+        const response = await myAxios.post("/register", values);
+        setUsers(prevUsers => [...prevUsers, response.data.data]);
+        fetch();
+        form.resetFields();
+        handleCancel();
+
+        // Hiển thị thông báo thành công
+        api["success"]({
+          message: response.data.message,
+        });
+      }
     } catch (e) {
+      // Xử lý lỗi nếu có
       console.log(e);
       api["error"]({
         message: e.response.data,
@@ -66,13 +74,6 @@ function Doctor() {
   };
 
   const columns = [
-    {
-      title: "Stt",
-      dataIndex: "stt",
-      key: "stt",
-      align: "center",
-      render: (text, record, index) => index + 1,
-    },
     {
       title: "Tên người dùng",
       dataIndex: "fullName",
@@ -102,28 +103,44 @@ function Doctor() {
       dataIndex: "gender",
       key: "gender",
       align: "center",
+      render: (text) => {
+        return text === "MALE" ? <span>Nam</span> : <span>Nữ</span>;
+      },
     },
     {
       title: "Ngày sinh",
       dataIndex: "dateOfBirth",
       key: "dateOfBirth",
       align: "center",
-    }
-    ,
+    },
+    {
+      title: "Cơ sở làm việc",
+      dataIndex: ["service", "facility", "facility_name"],
+      key: "serviceName",
+      align: "center",
+    },
     {
       title: "Dịch vụ khám",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "serviceName",
+      key: "serviceName",
       align: "center",
-    }
+    },
   ];
 
   const fetch = async () => {
-    const response = await myAxios.get("/accounts/doctor");
-    console.log(response,"????????????????????????????datagoctor");
-    setUsers(response.data.data);
+    try {
+      const response = await myAxios.get("/accounts/doctor");
+      const fetchedUsers = response.data.data; // Dữ liệu mới từ API
+      const modifiedUsers = fetchedUsers.map(user => ({
+        ...user,
+        serviceName: user.service ? user.service.name : '' // Lấy service.name nếu tồn tại, nếu không thì trả về ''
+      }));
+      setUsers(modifiedUsers); // Cập nhật state users với dữ liệu mới
+    } catch (error) {
+      console.error("Fetch error: ", error);
+    }
   };
-  
+
   const disabledDate = (current) => {
     const tenYearsAgo = moment().subtract(10, 'years');
     return current && current > tenYearsAgo;
@@ -131,6 +148,21 @@ function Doctor() {
 
   useEffect(() => {
     fetch();
+  }, []);
+
+  //Lấy dịch vụ
+  const [service, setService] = useState([]);
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await myAxios.get("/service/facility");
+        setService(response.data.data);
+      } catch (error) {
+        console.error("Error fetching setServices: ", error);
+      }
+    };
+
+    fetchServices();
   }, []);
 
   return (
@@ -144,9 +176,8 @@ function Doctor() {
           showModal();
         }}
       />
-
       <Modal
-        title="New user"
+        title="Thêm tài khoản bác sĩ"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -240,21 +271,15 @@ function Doctor() {
               </Form.Item>
             </Col>
           </Row>
-
           <Row gutter={16}>
             <Col span={24}>
-              <Form.Item
-                name="accountType"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter your address!",
-                  },
-                ]}
-              >
-                <Select placeholder="Select account type">
-                  <Option value="PATIENT">Patient</Option>
-                  <Option value="DOCTOR">Doctor</Option>
+              <Form.Item name="serviceName">
+                <Select placeholder="Chọn dịch vụ">
+                  {service.map(service => (
+                    <Option key={service.id} value={service.id}>
+                      {service.name}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </Col>

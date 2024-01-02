@@ -57,21 +57,6 @@ const ProfileUpdateForm = ({ initialValues, onSubmit }) => {
       key: 1,
       children: (
         <Form name="registrationForm" form={form} onFinish={onFinish} scrollToFirstError autoComplete="off">
-          {/* <Row gutter={16}>
-        <Col span={24}>
-          <Form.Item
-            name="avatarURL"
-            rules={[
-              {
-                type: "url",
-                message: "Please enter a valid URL!",
-              },
-            ]}
-          >
-            <Input prefix={<UserOutlined />} placeholder="Avatar URL" />
-          </Form.Item>
-        </Col>
-      </Row> */}
 
           <Row gutter={16}>
             <Col span={12}>
@@ -151,9 +136,25 @@ const ProfileUpdateForm = ({ initialValues, onSubmit }) => {
             </Col>
           </Row>
 
+
           <Row gutter={16}>
-            {/* Add additional fields here */}
-            <Col span={24}>
+          <Col span={12}>
+              <Form.Item
+                name="gender"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select your gender!",
+                  },
+                ]}
+              >
+                <Select placeholder="Select your gender">
+                  <Option value="MALE">Male</Option>
+                  <Option value="FEMALE">Female</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item
                 name="address"
                 rules={[

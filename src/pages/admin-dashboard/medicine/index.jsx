@@ -18,17 +18,22 @@ function Medicine() {
 
   const columns = [
     {
-      title: "Stt",
-      dataIndex: "stt",
-      key: "stt",
-      width: 100,
-      align: "center",
-      render: (text, record, index) => index + 1,
-    },
-    {
       title: "Tên thuốc",
       key: "name",
       dataIndex: "name",
+      align: "center",
+    },
+    {
+      title: "Thành phần hoạt chất",
+      key: "barcode",
+      dataIndex: "barcode",
+      align: "center",
+    },
+    {
+      title: "Cách dùng",
+      key: "describemedicine",
+      dataIndex: "describemedicine",
+      align: "center",
     },
     {
       title: "Hành động",
@@ -85,6 +90,7 @@ function Medicine() {
     }
   };
 
+
   return (
     <PageTemplate>
       {context}
@@ -96,6 +102,8 @@ function Medicine() {
             id: 0,
             name: "",
             description: "",
+            barcode:"",
+            describemedicine:"",
           });
         }}
         title="thuốc men"
@@ -111,10 +119,18 @@ function Medicine() {
           form.submit();
         }}
         visible={service != null && !showConfirmButton}
+        okText="Xác nhận"
+        cancelText="Hủy"
       >
         <Card title={service?.id == 0 ? "Thêm thuốc" : "Cập nhật thuốc"}>
           <Form form={form} onFinish={onFinish} labelCol={{ span: 6 }} labelAlign="left">
-            <Form.Item label="Name" name="name" rules={[{ required: true, message: "Please enter a name." }]}>
+            <Form.Item label="Tên thuốc:" name="name" rules={[{ required: true, message: "Vui lòng nhập tên thuốc" }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item label="Thành phần:" name="barcode" rules={[{ required: true, message: "Vui lòng nhập thành phần hoạt chất" }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item label="Mô tả:" name="describemedicine" rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}>
               <Input />
             </Form.Item>
           </Form>

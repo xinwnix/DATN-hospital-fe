@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
 import PageTemplate from "../../../template/page-template";
-import { Badge, Calendar, Tooltip, Modal } from "antd";
+import { Badge, Calendar, Tooltip, Modal, Table, Row } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import myAxios from "../../../config/config";
 import useUserInformation from "../../../hooks/useUserInformation";
 import { Link } from "react-router-dom";
+import 'moment/locale/vi';
+import locale from 'antd/es/date-picker/locale/vi_VN';
+
+
 
 function Schedule() {
   const [schedule, setSchedule] = useState([]);
   const { userInformation } = useUserInformation();
+  const today = dayjs();
+  
 
   useEffect(() => {
     const fetch = async () => {
@@ -30,10 +36,10 @@ function Schedule() {
   };
 
   const getListData = (value) => {
-    const formattedValueDate = value.format("YYYY-MM-DD"); // Định dạng ngày của giá trị
+    const formattedValueDate = value.format("YYYY-MM-DD");
     const eventsForDate = schedule.filter((event) => {
-      const formattedEventDate = dayjs(event.testDate).format("YYYY-MM-DD"); // Định dạng ngày của sự kiện
-      return formattedValueDate === formattedEventDate; // So sánh ngày đã định dạng
+      const formattedEventDate = dayjs(event.testDate).format("YYYY-MM-DD");
+      return formattedValueDate === formattedEventDate;
     });
 
     const listData = eventsForDate.map((event) => {
@@ -41,14 +47,17 @@ function Schedule() {
         type: "success",
         content: (
           <Tooltip title={getService(event.results)}>
-            <Link to={`${event.id}`}>{event.patient.fullName}</Link>
+            <Link to={`${event.id}`}>{event?.patient?.fullName || "-"}</Link>
           </Tooltip>
         ),
+        patient: event?.patient, // Bổ sung thông tin bệnh nhân vào đây
+        testDate: event.testDate // Bổ sung thông tin testDate vào đây
       };
     });
 
     return listData || [];
   };
+
 
   const getMonthData = (value) => {
     if (value.month() === 8) {
@@ -67,6 +76,10 @@ function Schedule() {
   };
 
   const dateCellRender = (value) => {
+    // ẩn lịch của ngày trước đó
+    if (value.isBefore(today, 'day')) {
+      return null; 
+    }
     const listData = getListData(value);
     return (
       <ul className="events">
@@ -89,8 +102,7 @@ function Schedule() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const handleDateClick = (value) => {
-    setSelectedDate(value);
-    // Kiểm tra xem có sự kiện nào cho ngày này hay không
+    setSelectedDate(value);   
     const eventsForDate = getListData(value);
     if (eventsForDate.length > 0) {
       setIsModalVisible(true);
@@ -105,40 +117,56 @@ function Schedule() {
     if (!selectedDate) {
       return null;
     }
-  
+
     const listData = getListData(selectedDate);
-  
+
+    const columns = [
+      {
+        title: "Stt",
+        dataIndex: "stt",
+        key: "stt",
+        with: 10,
+        align: "center",
+        render: (text, record, index) => index + 1,
+      },
+      {
+        title: 'Thời gian khám:',
+        dataIndex: 'testDate',
+        key: 'testDate',
+        render: (testDate) => dayjs(testDate).format('HH:mm'),
+      },
+      {
+        title: 'Tên bệnh nhân',
+        dataIndex: 'patient',
+        key: 'patient',
+        render: (text, record) => (
+          <Tooltip title={getService(record.patient.results)}>
+            <Link to={`${record.patient.id -1}`}>{record.patient.fullName || "-"}</Link>
+          </Tooltip>
+        ),
+        
+      },
+    ];
+
     return (
       <div>
-        <h3>Thông tin ngày {selectedDate.format("DD/MM/YYYY")}:</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Thời gian</th>
-              <th>Dịch vụ khám</th>
-              <th>Tên bệnh nhân</th>
-              {/* Các cột khác nếu cần */}
-            </tr>
-          </thead>
-          <tbody>
-            {listData.map((item, index) => (
-              <tr key={index}>
-                <td>{dayjs(item.testDate).format("DD/MM/YYYY HH:mm:ss")}</td>
-                <td>{getService(item.results)}</td>
-                <td>{item.patient?.fullName || "-"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <h2 style={{marginBottom:"50px"}} >Thông tin ngày {selectedDate.format('DD/MM/YYYY')}:</h2>
+        <Table 
+        dataSource={listData} 
+        columns={columns}
+        pagination={false}
+        style={{overflow: 'hidden'}}
+         />
       </div>
     );
   };
 
 
   return (
-    <PageTemplate>
-      <Calendar cellRender={cellRender} onSelect={handleDateClick} />
+    <PageTemplate >
+      <Calendar locale={locale} cellRender={cellRender} onSelect={handleDateClick}  style={{overflow:"hidden", height:"82vh", marginTop:"-15px"}} />
       <Modal
+        width={"50%"}
         open={isModalVisible}
         onCancel={handleModalClose}
         footer={null}

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import PageTemplate from "../../../template/page-template";
 import { useParams } from "react-router-dom";
 import myAxios from "../../../config/config";
-import { Button, Card, Col, Descriptions, Form, Input, InputNumber, Row,Select,Space, Tabs, notification, } from "antd";
+import { Button, Card, Col, Descriptions, Form, Input, InputNumber, Row, Select, Space, Tabs, notification, Modal  } from "antd";
 import { formatDate } from "../../../utils/date-time";
 import { MinusCircleOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
-
+import { Link } from "react-router-dom";
 import "./index.scss";
 import { useForm } from "antd/es/form/Form";
 function OrderDetail({ orderId, disable }) {
@@ -76,7 +76,7 @@ function OrderDetail({ orderId, disable }) {
       align: "center",
       render: (text, record, index) => {
         if (orderDetail.prescription) {
-          return record.medicine.name;
+          return record.medicine?.name;
         }
         return (
           <Select
@@ -183,6 +183,7 @@ function OrderDetail({ orderId, disable }) {
     api.success({
       message: response.data.message,
     });
+    
   };
 
   const items = [
@@ -192,37 +193,26 @@ function OrderDetail({ orderId, disable }) {
       children: (
         <Card title="Thông tin đặt lịch" style={{ margin: "20px 0" }}>
           <Descriptions bordered column={2}>
-            <Descriptions.Item label="Test Date">
+            <Descriptions.Item label="Ngày khám">
               {formatDate(orderDetail?.testDate, "dd/MM/yyyy HH:mm")}
             </Descriptions.Item>
-            <Descriptions.Item label="Created At">
+            <Descriptions.Item label="Ngày tạo">
               {formatDate(orderDetail?.createdAt, "dd/MM/yyyy HH:mm")}
             </Descriptions.Item>
 
-            <Descriptions.Item label="Tên bệnh nhân">{orderDetail?.patient.fullName}</Descriptions.Item>
+            <Descriptions.Item label="Tên bệnh nhân">{orderDetail?.patient?.fullName}</Descriptions.Item>
             <Descriptions.Item label="Giới tính">{orderDetail?.patient.gender}</Descriptions.Item>
             <Descriptions.Item label="Ngày sinh">{orderDetail?.patient.dateOfBirth}</Descriptions.Item>
             <Descriptions.Item label="Số điện thoại">{orderDetail?.patient.phone}</Descriptions.Item>
             <Descriptions.Item label="Email">{orderDetail?.patient.email}</Descriptions.Item>
+            //
             <Descriptions.Item label="Địa chỉ">{orderDetail?.patient.address}</Descriptions.Item>
-
-            <Descriptions.Item label="Tên bác sĩ">{orderDetail?.doctor.fullName}</Descriptions.Item>
-
-            {orderDetail?.results.length > 0 && (
-              <Descriptions.Item label="Tên dịch vụ" span={2}>
-                <ul>
-                  {orderDetail?.results.map((result, index) => (
-                    <li key={index}>{result.service.name}</li>
-                  ))}
-                </ul>
-              </Descriptions.Item>
-            )}
+            //
+            <Descriptions.Item label="Cơ sở khám">{orderDetail?.doctor?.service?.facility?.facility_name}</Descriptions.Item>
+            <Descriptions.Item label="Tên bác sĩ">{orderDetail?.doctor?.fullName}</Descriptions.Item>
+            <Descriptions.Item label="Tên dịch vụ" span={2}>{orderDetail?.doctor?.service?.name}</Descriptions.Item>
             <Descriptions.Item label="Ghi chú" span={2}>
               {orderDetail?.note}
-            </Descriptions.Item>
-
-            <Descriptions.Item label="Kết luận" span={2}>
-              {orderDetail?.conclude}
             </Descriptions.Item>
           </Descriptions>
         </Card>
@@ -236,37 +226,63 @@ function OrderDetail({ orderId, disable }) {
           <Descriptions bordered column={1}>
             {orderDetail?.results?.map((item, index) => {
               return (
-                <Descriptions.Item label={item.service.name}>
+                <Descriptions.Item label={orderDetail?.doctor?.service?.name} >
                   <Row gutter={16}>
                     <Col span={5}>
-                      <Select
-                        disabled={disableEdit}
-                        value={item.level}
-                        onChange={(value) => {
-                          handleOnChangeResult(value, index, "level");
-                        }}
-                        placeholder="Chọn mức độ"
+                      <Form.Item
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng chọn mức độ!",
+                          },
+                        ]}
                       >
-                        <Option value="GOOD">GOOD</Option>
-                        <Option value="NORMAL">NORMAL</Option>
-                        <Option value="ALARM">ALARM</Option>
-                      </Select>
+                        <Select
+                          disabled={disableEdit}
+                          value={item.level}
+                          onChange={(value) => {
+                            handleOnChangeResult(value, index, "level");
+                          }}
+                          placeholder="Chọn mức độ"
+                        >
+                          <Option value="GOOD">Tốt</Option>
+                          <Option value="NORMAL">Trung bình</Option>
+                          <Option value="ALARM">Yếu</Option>
+                        </Select>
+                      </Form.Item>
                     </Col>
                   </Row>
                   <Row style={{ margin: "20px 0" }}>
                     <Col span={24}>
-                      <Input
-                        disabled={disableEdit}
-                        value={item.value}
-                        placeholder="Phân tích"
-                        onChange={(e) => {
-                          handleOnChangeResult(e.target.value, index, "value");
-                        }}
-                      />
+                      <Form.Item
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng nhập phân tích!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          disabled={disableEdit}
+                          value={item.value}
+                          placeholder="Phân tích"
+                          onChange={(e) => {
+                            handleOnChangeResult(e.target.value, index, "value");
+                          }}
+                        />
+                      </Form.Item>
                     </Col>
                   </Row>
                   <Row>
                     <Col span={24}>
+                    <Form.Item
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng nhập kết luận!",
+                          },
+                        ]}
+                      >
                       <Input
                         disabled={disableEdit}
                         value={item.comment}
@@ -275,6 +291,7 @@ function OrderDetail({ orderId, disable }) {
                           handleOnChangeResult(e.target.value, index, "comment");
                         }}
                       />
+                      </Form.Item>
                     </Col>
                   </Row>
                 </Descriptions.Item>
@@ -295,12 +312,11 @@ function OrderDetail({ orderId, disable }) {
       label: `Toa thuốc`,
       key: 3,
       children: (
-        <Card title="Toa thuốc" style={{ margin: "20px 0" }}>
+        <Card title="Thêm toa thuốc" style={{ margin: "20px 0" }}>
           <Form
             disabled={disableEdit}
             form={formPrescriptions}
             onFinish={async (values) => {
-              console.log(values,">>>>>>>>>>>>>>>>>>valuessssssssssssssss");
               const response = await myAxios.post(`/prescription/${param.orderId}`, values);
               setRender(render + 1);
               api.success({
@@ -391,6 +407,7 @@ function OrderDetail({ orderId, disable }) {
                     message: "Hoàn thành",
                   });
                   setOrderDetail(response.data.data);
+                  window.location.href = "/doctor/schedule"
                 } catch (e) {
                   console.log(e);
                 }
@@ -401,6 +418,9 @@ function OrderDetail({ orderId, disable }) {
           </Row>
         )}
       </div>
+      {/* <div className="order-detail"> */}
+      {/* <Link to="/doctor/schedule">Trở lại</Link> */}
+      {/* </div> */}
     </PageTemplate>
   );
 }

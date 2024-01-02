@@ -66,14 +66,13 @@ export default function Register() {
             .confirm(code)
             .then((result) => {
                 setIsCheckedOTP(true);
-
                 api.success({
                     message: "Đã xác minh otp thành công",
                 });
             })
             .catch((error) => {
                 api.error({
-                    message: "Bad OTP",
+                    message: "Mã OTP không khớp",
                 });
             });
     };
@@ -81,8 +80,7 @@ export default function Register() {
     const onFinish = async (values) => {
         if (!isCheckOTP) {
             api["error"]({
-                message: "Error",
-                description: "Xác minh otp không thành công",
+                message: "Xác minh otp không thành công",
             });
             return;
         }
@@ -92,9 +90,9 @@ export default function Register() {
             console.log(values);
             const response = await myAxios.post("/register", values);
             api["success"]({
-                message: "Successfully",
                 description: response.data.message,
             });
+            window.location.href = "/login"
         } catch (e) {
             api["error"]({
                 message: "Duplicate",

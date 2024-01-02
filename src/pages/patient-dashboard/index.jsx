@@ -18,7 +18,7 @@ function PaientDashboard() {
   const items = [
     getItem("Thông tin", "patient/profile", React.createElement(UserOutlined)),
     getItem("Hồ sơ sức khỏe", "patient/health", React.createElement(HeartOutlined)),
-    getItem("Đăng kí dịch vụ", "patient/service", React.createElement(FormOutlined)),
+    getItem("Đặt lịch khám", "patient/service", React.createElement(FormOutlined)),
     getItem("Lịch sử", "patient/history", React.createElement(HistoryOutlined)),
   ];
   return <DashBoard items={items}/>;

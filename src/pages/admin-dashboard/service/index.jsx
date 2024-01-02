@@ -24,44 +24,57 @@ function Service() {
 
   const columns = [
     {
-      title: "Stt",
-      dataIndex: "stt",
-      key: "stt",
-      align: "center",
-      render: (text, record, index) => index + 1,
-    },
-    {
       title: "Ảnh dịch vụ",
       key: "image",
       dataIndex: "image",
+      align: "center",
       width: 150,
+      ellipsis: true,
       render: (image) => (
-        <img style={{ width: "100px", height: "50px", objectFit: "cover" }} src={image} alt='Không có ảnh' />
+        <img style={{ width: "100px", height: "50px", objectFit: "cover", display:"flex", alignItems:"center", justifyContent:"center" }} src={image} alt='Không có ảnh' />
       ),
     },
     {
       title: "Tên cơ sở",
       key: "facility_name",
       dataIndex: "facilityName",
+      align: "center",
       width: 250,
+      ellipsis: true,
+      render: (facilityName) => <div style={{ height: "50px", overflow: "hidden", display:"flex", alignItems:"center", justifyContent:"center" }}>{facilityName}</div>,
     },
     {
       title: "Tên dịch vụ",
       key: "name",
       dataIndex: "name",
+      align: "center",
       width: 250,
+      ellipsis: true,
+      render: (name) => <div style={{ height: "50px", overflow: "hidden", display:"flex", alignItems:"center", justifyContent:"center" }}>{name}</div>,
     },
     {
       title: "Giá tiền",
       key: "price",
       dataIndex: "price",
+      align: "center",
       width: 200,
+      ellipsis: true,
+      render: (description) => (
+        <div style={{ height: "50px", overflow: "hidden", display: "flex", alignItems: "center" }}>
+          <div style={{ display: "inline-block" }}>
+            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(description).replace('₫', '')}VNĐ
+          </div>
+        </div>
+      ),
     },
     {
       title: "Mô tả",
       key: "description",
       dataIndex: "description",
+      align: "center",
       width: 300,
+      ellipsis: true,
+      render: (description) => <div style={{ height: "50px", overflow: "hidden", display:"flex", alignItems:"center", justifyContent:"center" }}>{description}</div>,
     },
     {
       title: "Hành động",
@@ -112,7 +125,6 @@ function Service() {
     const fetch = async () => {
       try {
         const response = await myAxios.get("/service");
-        console.log(response,">..............................data service");
         const responseData = response.data.data;
 
         if (responseData && responseData.length > 0) {
@@ -174,7 +186,6 @@ function Service() {
         id: service?.id,
         image: imageUrl,
       };
-
       const response = await myAxios.post("/service", payload);
 
       setRender(render + 1);
@@ -193,6 +204,19 @@ function Service() {
 
   //lấy cơ sở vào selection
   const { Option } = Select;
+  const [facility, setFacility] = useState([]);
+  useEffect(() => {
+    const fetchFacilities = async () => {
+      try {
+        const response = await myAxios.get("/facility");
+        setFacility(response.data.data);
+      } catch (error) {
+        console.error("Error fetching facilities: ", error);
+      }
+    };
+
+    fetchFacilities();
+  }, []);
 
   return (
     <PageTemplate>
@@ -204,6 +228,7 @@ function Service() {
           setService({
             id: 0,
             image: "",
+            facilityac_id:"",
             name: "",
             price: "",
             description: "",
@@ -254,25 +279,24 @@ function Service() {
                   {fileList.length < 1 && '+ Upload'}
                 </Upload>
                 {service && (
-                  <img style={{ width: '100px', height: '100px', objectFit: 'cover' }} src={imageUrl || service?.image} alt="Không có ảnh" />
+                  <img style={{ width: '100px', height: '100px', objectFit: 'cover' }} src={imageUrl || service?.image} alt="Chưa có ảnh" />
                 )}
               </ImgCrop>
             </Form.Item>
 
-            <Form.Item label="Tên cơ sở" name="facilityac_id">
-              <Select placeholder="Chọn cơ sở">
-                {services.map(service => (
-                  service.facility && ( // Kiểm tra xem có thông tin về cơ sở không
-                    <Option key={service.facility.id} value={service.facility.id}>
-                      {service.facility.facility_name}
+            <Form.Item label="Tên cơ sở" name="facilityac_id" rules={[{ required: true, message: "Vui lòng chọn dịch vụ." }]} >
+              <Select placeholder="Chọn cơ sở" >
+                {facility.map(facility => (
+                    <Option 
+                     value={facility.id}>
+                      {facility.facility_name}
                     </Option>
-                  )
                 ))}
               </Select>
             </Form.Item>
 
-            <Form.Item label="Tên dịch vụ" name="name" rules={[{ required: true, message: "Please enter a name." }]}>
-              <Input />
+            <Form.Item label="Tên dịch vụ" name="name" rules={[{ required: true, message: "Vui lòng nhập tên dịch vụ." }]}>
+              <Input placeholder="Nhập tên dịch vụ" />
             </Form.Item>
 
             <Form.Item
@@ -281,7 +305,7 @@ function Service() {
               rules={[
                 {
                   required: true,
-                  message: 'Please enter a price.',
+                  message: 'Vui lòng nhập giá tiền.',
                 },
               ]}
             >
@@ -295,9 +319,9 @@ function Service() {
             <Form.Item
               label="Mô tả"
               name="description"
-              rules={[{ required: true, message: "Please enter a description." }]}
+              rules={[{ required: true, message: "Vui lòng nhập mô tả." }]}
             >
-              <Input.TextArea />
+              <Input.TextArea placeholder="Mô tả" style={{minHeight:"100px"}} />
             </Form.Item>
           </Form>
         </Card>
@@ -318,6 +342,8 @@ function Service() {
           setService(null);
           setShowConfirmButton(false);
         }}
+        okText="Xác nhận"
+        cancelText="Hủy"
       >
         <Title style={{ fontSize: 20 }}>Bạn có muốn xóa dịch vụ này?</Title>
       </Modal>

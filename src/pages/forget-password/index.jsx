@@ -5,7 +5,7 @@ import { useForm } from "antd/es/form/Form";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../../config/firebase";
 import myAxios from "../../config/config";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 const ForgetPassword = () => {
   const [account, setAccount] = useState();
   const [api, contextHolder] = notification.useNotification();
@@ -140,7 +140,7 @@ const ForgetPassword = () => {
     if (!value || vietnamesePhoneNumberRegex.test(value)) {
       return Promise.resolve();
     }
-    return Promise.reject("Please enter a valid Vietnamese phone number!");
+    return Promise.reject("Vui lòng nhập số điện thoại Việt Nam!");
   };
   return (
     <div className="forget-password">
@@ -148,37 +148,38 @@ const ForgetPassword = () => {
       <button id="sign-in-button"></button>
       {!isCheckOTP ? (
         <div className="wrapper">
-          <h2>Forget Password</h2>
+          
+          <h2 style={{fontSize:"22px"}}>Đặt lại mật khẩu</h2>
           <Form form={form} onFinish={onFinish}>
             <Form.Item
               name="phone"
-              label="Phone"
+              label="Số điện thoại:"
               rules={[
                 {
                   required: true,
-                  message: "Please enter your phone!",
+                  message: "Vui lòng nhập số điện thoại của bạn!",
                 },
                 {
                   validator: validateVietnamesePhoneNumber,
                 },
               ]}
             >
-              <Input />
+              <Input style={{width:"250px", marginLeft:"5px"}}/>
             </Form.Item>
 
             {confirmationResult && (
               <Form.Item
                 name="otp"
-                label="OTP"
+                label="Nhập mã OTP:"
                 rules={[
                   {
                     required: true,
-                    message: "Please enter your phone!",
+                    message: "Vui lòng nhập số điện thoại của bạn!",
                   },
                   
                 ]}
               >
-                <Input value={code} onChange={(e) => setCode(e.target.value)} />
+                <Input value={code} onChange={(e) => setCode(e.target.value)} style={{width:"250px"}}/>
               </Form.Item>
             )}
 
@@ -186,20 +187,21 @@ const ForgetPassword = () => {
               <Row style={{ justifyContent: "center" }}>
                 {confirmationResult ? (
                   <Button type="primary" htmlType="submit" onClick={verify}>
-                    Check OTP
+                    Kiểm tra OTP
                   </Button>
                 ) : (
                   <Button type="primary" htmlType="submit" onClick={sendOtp}>
-                    Send OTP
+                    Gửi OTP
                   </Button>
                 )}
               </Row>
+              <p style={{fontSize:"16px",marginLeft:"10%", marginTop:"15px"}}>Quay lại đăng nhập?<Link to={"/login"}> Đăng nhập ngay.</Link></p>
             </Form.Item>
           </Form>
         </div>
       ) : (
         <div className="wrapper">
-          <h2>Reset password</h2>
+          <h2>Đặt lại mật khẩu</h2>
           <Form form={form} onFinish={resetPassword}>
             <Form.Item
               name="newPassword"
@@ -215,7 +217,7 @@ const ForgetPassword = () => {
                 // },
               ]}
             >
-              <Input.Password  placeholder="New Password" />
+              <Input.Password  placeholder="Mật khẩu mới:" />
             </Form.Item>
             <Form.Item
               name="repassword"
@@ -231,11 +233,11 @@ const ForgetPassword = () => {
                 }),
               ]}
             >
-              <Input.Password  placeholder="Confirm new password" />
+              <Input.Password  placeholder="Xác nhận lại mật khẩu:" />
             </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Reset password
+            <Form.Item style={{display:"flex", justifyContent:"center"}}>
+              <Button type="primary" htmlType="submit" >
+                Xác nhận
               </Button>
             </Form.Item>
           </Form>

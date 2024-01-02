@@ -33,6 +33,8 @@ const ProfileUpdateForm = ({ initialValues, onSubmit }) => {
     const response = await myAxios.put(`/password/${userInformation.id}`, {
       newPassword: values.newPassword,
     });
+    form2.resetFields();
+    window.location.href = '/patient/profile';
     api["success"]({
       message: response.data.message,
     });
@@ -165,7 +167,7 @@ const ProfileUpdateForm = ({ initialValues, onSubmit }) => {
       ),
     },
     {
-      label: "Mật khẩu",
+      label: "Đổi mật khẩu",
       key: 2,
       children: (
         <Form

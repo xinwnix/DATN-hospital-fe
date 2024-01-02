@@ -10,13 +10,6 @@ function User() {
 
   const columns = [
     {
-      title: "Stt",
-      dataIndex: "stt",
-      key: "stt",
-      align: "center",
-      render: (text, record, index) => index + 1,
-    },
-    {
       title: "Tên người dùng",
       dataIndex: "fullName",
       key: "fullName",
@@ -45,6 +38,9 @@ function User() {
       dataIndex: "gender",
       key: "gender",
       align: "center",
+      render: (text) => {
+        return text === "MALE" ? <span>Nam</span> : <span>Nữ</span>;
+      },
     },
     {
       title: "Ngày sinh",

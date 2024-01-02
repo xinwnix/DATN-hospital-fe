@@ -15,6 +15,7 @@ import DoctorDashboard from "./pages/doctor-dashboard";
 import Schedule from "./pages/doctor-dashboard/schedule";
 import OrderDetail from "./pages/doctor-dashboard/order-detail";
 import HealthRecord from "./pages/patient-dashboard/health-record";
+import Facility from "./pages/admin-dashboard/facility";
 import Service from "./pages/admin-dashboard/service";
 import Medicine from "./pages/admin-dashboard/medicine";
 import Statistical from "./pages/admin-dashboard/statistical";
@@ -42,6 +43,7 @@ function App() {
           <Route path="user" element={<User />}></Route>
           <Route path="doctor" element={<Doctor />}></Route>
           <Route path="order" element={<Order />}></Route>
+          <Route path="facility" element={<Facility />}></Route>
           <Route path="service" element={<Service />}></Route>
           <Route path="medicine" element={<Medicine />}></Route>
           <Route path="statistical" element={<Statistical/>}></Route>

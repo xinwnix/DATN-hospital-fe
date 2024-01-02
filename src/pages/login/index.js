@@ -51,10 +51,11 @@ function Login() {
                             initialValues={{ remember: true }}
                             onFinish={onFinish}
                             autoComplete="off"
+                            style={{width:"70%"}}
                         >
                             <Form.Item
                                 labelAlign="left"
-                                label="Số điện thoại hoặc email"
+                                label="Tên đăng nhập"
                                 name="phone"
                                 rules={[{ required: true, message: "Vui lòng nhập tên người dùng của bạn!" }]}
                             >

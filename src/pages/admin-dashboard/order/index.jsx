@@ -22,14 +22,7 @@ function Order() {
 
   const columns = [
     {
-      title: "Stt",
-      dataIndex: "stt",
-      key: "stt",
-      align: "center",
-      render: (text, record, index) => index + 1,
-    },
-    {
-      title: "Ngày kiểm tra",
+      title: "Ngày khám",
       dataIndex: "testDate",
       key: "testDate",
       align: "center",
@@ -61,13 +54,27 @@ function Order() {
       key: "doctor.fullName",
     },
     {
+      title: "Dịch vụ khám",
+      dataIndex: ["doctor","service", "name"],
+      align: "center",
+      key: "doctor.fullName",
+    },
+    {
+      title: "Giá cả",
+      dataIndex: ["doctor","service", "price"],
+      align: "center",
+      key: "doctor.fullName",
+    },
+    {
       title: "Trạng thái",
       dataIndex: "status",
       align: "center",
       key: "status",
       filters: [
-        { text: "IN_PROCESS", value: "IN_PROCESS" },
-        { text: "CONFIRM", value: "CONFIRM" },
+        { text: "Hoàn thành", value: "DONE" },
+        { text: "Đang xử lý", value: "IN_PROCESS" },
+        { text: "Chờ xác nhận", value: "CONFIRM" },
+        { text: "Từ chối", value: "REJECT" },
       ],
       onFilter: (value, record) => record.status === value,
       render: (value) => {
@@ -99,7 +106,6 @@ function Order() {
                       if (item.id === response.data.data.id) {
                         item = response.data.data;
                       }
-
                       return item;
                     })
                   );

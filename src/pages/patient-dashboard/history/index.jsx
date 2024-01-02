@@ -14,7 +14,6 @@ function History() {
   useEffect(() => {
     const fetch = async () => {
       const response = await myAxios.get(`/order/${userInformation?.id}`);
-      console.log(response,">>>>>>>>>>>>>>>>>>>>>>>>rì pon");
       setOrders(response.data.data);
     };
     userInformation && fetch();
@@ -88,6 +87,8 @@ function History() {
         visible={isModalVisible}
         onOk={handleModalConfirm}
         onCancel={handleModalCancel}
+        okText="Xác nhận"
+        cancelText="Hủy"
       >
         Bạn có chắc chắn muốn hủy đặt lịch này không?
       </Modal>
