@@ -163,7 +163,7 @@ function Service() {
 
       // Nếu người dùng không chọn ảnh mới mà muốn xóa ảnh hiện tại
       if (!currentFile) {
-        setImageUrl(''); // Xóa đường dẫn ảnh
+        setImageUrl(''); 
         setFileList([]); // Xóa danh sách file
         return;
       }
