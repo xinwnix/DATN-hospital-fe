@@ -1,6 +1,4 @@
 import axios from "axios";
-// const baseUrl = "https://referity.online/";  
-// const baseUrl = 'https://referity.online/api';
 const baseUrl = "http://localhost:6868/";
 
 const config = {

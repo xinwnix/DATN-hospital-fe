@@ -46,9 +46,7 @@ function Doctor() {
 
   const onFinish = async (values) => {
     try {
-      // Tìm dịch vụ được chọn từ danh sách các dịch vụ
       const selectedService = service.find(serv => serv.id === values.serviceName);
-      // Nếu dịch vụ được chọn tồn tại
       if (selectedService) {
         values.service_id = selectedService.id;
         values.accountType = "DOCTOR";
@@ -58,14 +56,11 @@ function Doctor() {
         fetch();
         form.resetFields();
         handleCancel();
-
-        // Hiển thị thông báo thành công
         api["success"]({
           message: response.data.message,
         });
       }
     } catch (e) {
-      // Xử lý lỗi nếu có
       console.log(e);
       api["error"]({
         message: e.response.data,
@@ -130,12 +125,12 @@ function Doctor() {
   const fetch = async () => {
     try {
       const response = await myAxios.get("/accounts/doctor");
-      const fetchedUsers = response.data.data; // Dữ liệu mới từ API
+      const fetchedUsers = response.data.data;
       const modifiedUsers = fetchedUsers.map(user => ({
         ...user,
-        serviceName: user.service ? user.service.name : '' // Lấy service.name nếu tồn tại, nếu không thì trả về ''
+        serviceName: user.service ? user.service.name : ''
       }));
-      setUsers(modifiedUsers); // Cập nhật state users với dữ liệu mới
+      setUsers(modifiedUsers);
     } catch (error) {
       console.error("Fetch error: ", error);
     }
@@ -202,7 +197,7 @@ function Doctor() {
                   },
                 ]}
               >
-                <Input prefix={<UserOutlined />} placeholder="Full Name" />
+                <Input prefix={<UserOutlined />} placeholder="Họ và tên" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -238,7 +233,7 @@ function Doctor() {
                   },
                 ]}
               >
-                <Input prefix={<PhoneOutlined />} placeholder="Phone Number" />
+                <Input prefix={<PhoneOutlined />} placeholder="Số điện thoại" />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -251,7 +246,7 @@ function Doctor() {
                   },
                 ]}
               >
-                <Select placeholder="Select your gender">
+                <Select placeholder="Giới tính">
                   <Option value="MALE">Male</Option>
                   <Option value="FEMALE">Female</Option>
                 </Select>
@@ -267,7 +262,7 @@ function Doctor() {
                   },
                 ]}
               >
-                <DatePicker disabledDate={disabledDate} placeholder="Date of Birth" style={{ width: "100%" }} format={"DD/MM/YYYY"} />
+                <DatePicker disabledDate={disabledDate} placeholder="Ngày sinh" style={{ width: "100%" }} format={"DD/MM/YYYY"} />
               </Form.Item>
             </Col>
           </Row>
@@ -296,7 +291,7 @@ function Doctor() {
                   },
                 ]}
               >
-                <TextArea prefix={<HomeOutlined />} placeholder="Address" />
+                <TextArea prefix={<HomeOutlined />} placeholder="Địa chỉ" />
               </Form.Item>
             </Col>
           </Row>

@@ -43,7 +43,7 @@ const getColorBasedOnStatus = (status) => {
     case "IN_PROCESS":
       return "yellow";
     case "NORMAL":
-      return "blue"; // Thay đổi màu của NORMAL thành màu xanh
+      return "red";
     case "GOOD":
       return "green";
     case "ALARM":

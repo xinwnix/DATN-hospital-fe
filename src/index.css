@@ -39,3 +39,12 @@
   color: #45c3d2;
   border-color: #45c3d2
 }
+
+/* Trong CSS của component hoặc tệp CSS chung */
+.ant-modal {
+  z-index: 1000; /* Chọn một giá trị đủ lớn để đặt modal thứ nhất lên trên */
+}
+
+.ant-modal + .ant-modal {
+  z-index: 1001; /* Một giá trị lớn hơn để đặt modal thứ hai lên trên modal thứ nhất */
+}

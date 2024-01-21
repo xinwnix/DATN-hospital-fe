@@ -227,8 +227,8 @@ function HealthRecord() {
             </Form.Item>
           </Form>
           <Table
-            dataSource={healthRecord.filter(item => item.id === record.id)} // Sử dụng dataSource tương ứng với dữ liệu cho bảng
-            columns={columnPrescription} // Nếu muốn tắt phân trang
+            dataSource={healthRecord.filter(item => item.id === record.id)} 
+            columns={columnPrescription}
             style={{ marginTop: "20px", width: "100%x" }}
           />
         </div>

@@ -33,7 +33,7 @@ function ServiceRegister() {
     setSelectedService(item);
     setSelectedFacilityName(item.facility.facility_name);
     showModal();
-    await fetchDoctorsByService(item.id); // Lấy danh sách bác sĩ dựa trên dịch vụ được chọn
+    await fetchDoctorsByService(item.id);
   };
 
   const handleCancel = () => {
@@ -59,14 +59,12 @@ function ServiceRegister() {
   const fetchServicesByFacility = async (facilityId) => {
     try {
       const response = await myAxios.get(`/facility-services/${facilityId}`);
-      setService(response.data.data.services); // Cập nhật state service với dữ liệu dịch vụ từ API
+      setService(response.data.data.services);
     } catch (error) {
       console.error("Error fetching services: ", error);
-      setService([]); // Đặt state service thành mảng rỗng nếu có lỗi
+      setService([]);
     }
   };
-
-  // Trong hàm handleFacilityChange, gọi hàm fetchServicesByFacility khi khu vực được chọn
   const handleFacilityChange = async (value) => {
     setSelectedFacilityName(value);
     if (value === "all") {
@@ -99,7 +97,7 @@ function ServiceRegister() {
   const fetchDoctorsByService = async (serviceId) => {
     try {
       const response = await myAxios.get(`/service-doctors/${serviceId}`);
-      setDoctor(response.data.data); // Đảm bảo endpoint trả về dữ liệu đúng
+      setDoctor(response.data.data);
     } catch (error) {
       console.error("Error fetching doctors: ", error);
       setDoctor([]);
@@ -114,9 +112,9 @@ function ServiceRegister() {
 
     console.log("Ngày đã chọn:", testDate);
     const dataToSend = {
-      testDate: testDate.toDate(), // Chuyển đổi kiểu ngày tháng nếu cần
+      testDate: testDate.toDate(),
       doctorId,
-      services: [selectedService.id], // Thêm ID của dịch vụ đã chọn vào mảng services
+      services: [selectedService.id],
       note,
       patientId: userInformation.id,
       facilityod_id: selectedService && selectedService.facility ? selectedService.facility.id : null, // Lấy facilityod_id từ selectedService (nếu có)
@@ -181,11 +179,11 @@ function ServiceRegister() {
         <Col span={11}>
           <Form.Item name="facilityod_id">
             <Select
-              placeholder="Chọn khu vực"
+              placeholder="Chọn bệnh viện"
               onChange={handleFacilityChange}
               defaultValue="all"
             >
-              <Option value="all">Tất cả khu vực</Option>
+              <Option value="all">Tất cả bệnh viện</Option>
               {facility.map((item) => (
                 <Option key={item.id} value={item.id}>
                   {item.facility_name}
@@ -210,7 +208,7 @@ function ServiceRegister() {
               <p>Giá tiền: {item.price}</p>
               <p>Mô tả: {item.description}</p>
               {item.facility && (
-                <p>Tên cơ sở: {item.facility.facility_name}</p>
+                <p>Tên bệnh viện: {item.facility.facility_name}</p>
               )}
             </Card>
           </Col>

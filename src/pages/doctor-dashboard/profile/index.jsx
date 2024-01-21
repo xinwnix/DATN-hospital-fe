@@ -21,7 +21,6 @@ const ProfileUpdateForm = ({ initialValues, onSubmit }) => {
     const formattedDate = dayjs(values.dateOfBirth).format("DD/MM/YYYY");
     values.id = userInformation.id;
     values.password = "123";
-    // values.dateOfBirth = formattedDate;
     const response = await myAxios.put(`/profile`, values);
     api["success"]({
       message: response.data.message,

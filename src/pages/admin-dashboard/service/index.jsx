@@ -86,17 +86,14 @@ function Service() {
             <Button
               type="primary"
               onClick={() => {
-                form.setFieldsValue(record); // Gán thông tin của dịch vụ vào form
-                setService(record); // Lưu thông tin dịch vụ để cập nhật
-                // Gán thông tin ảnh và fileList của dịch vụ vào state để hiển thị
+                form.setFieldsValue(record);
+                setService(record);
                 setImageUrl(record.image || '');
                 if (record.image) {
                   setFileList([{ uid: '-1', name: 'image.png', status: 'done', url: record.image }]);
                 } else {
-                  setFileList([]); // Nếu không có ảnh, xóa fileList để hiển thị '+ Upload'
+                  setFileList([]);
                 }
-
-                // Gán giá trị facilityac_id để hiển thị tên cơ sở trong Select
                 const facilityId = record.facility?.id || undefined;
                 form.setFieldsValue({ ...record, facilityac_id: facilityId });
               }}
@@ -147,8 +144,8 @@ function Service() {
 
   const handleInputChange = (e) => {
     const inputValue = e.target.value;
-    const numericValue = parseFloat(inputValue.replace(/[^\d.-]/g, '')); // Lấy giá trị số từ chuỗi nhập vào
-    const formattedValue = numericValue.toLocaleString('vi-VN'); // Định dạng số theo định dạng tiền tệ
+    const numericValue = parseFloat(inputValue.replace(/[^\d.-]/g, ''));
+    const formattedValue = numericValue.toLocaleString('vi-VN');
 
     setFormattedPrice(formattedValue);
   };
@@ -160,21 +157,18 @@ function Service() {
   const onChange = (file) => {
     if (file.fileList.length > 0) {
       const currentFile = file.fileList[0].originFileObj;
-
-      // Nếu người dùng không chọn ảnh mới mà muốn xóa ảnh hiện tại
       if (!currentFile) {
         setImageUrl(''); 
-        setFileList([]); // Xóa danh sách file
+        setFileList([]);
         return;
       }
 
       const url = URL.createObjectURL(currentFile);
-      // Thực hiện các hành động cần thiết với đường dẫn ảnh
       setImageUrl(url); // Lưu đường dẫn ảnh
-      setFileList(file.fileList); // Lưu danh sách file
+      setFileList(file.fileList);
     } else {
-      setImageUrl(''); // Xóa đường dẫn ảnh nếu không có ảnh nào được chọn
-      setFileList([]); // Xóa danh sách file nếu không có ảnh nào được chọn
+      setImageUrl('');
+      setFileList([]);
     }
   };
 
@@ -182,7 +176,7 @@ function Service() {
     try {
       const payload = {
         ...values,
-        facilityac_id: values.facilityac_id, // Chọn cơ sở từ Select và lưu vào facility_id
+        facilityac_id: values.facilityac_id,
         id: service?.id,
         image: imageUrl,
       };
@@ -201,8 +195,6 @@ function Service() {
     }
   };
 
-
-  //lấy cơ sở vào selection
   const { Option } = Select;
   const [facility, setFacility] = useState([]);
   useEffect(() => {
@@ -345,7 +337,7 @@ function Service() {
         okText="Xác nhận"
         cancelText="Hủy"
       >
-        <Title style={{ fontSize: 20 }}>Bạn có muốn xóa dịch vụ này?</Title>
+        <Title style={{ fontSize: 20 }}>Bạn có muốn xóa dịch vụ "{service?.name}" này không?</Title>
       </Modal>
     </PageTemplate>
   );

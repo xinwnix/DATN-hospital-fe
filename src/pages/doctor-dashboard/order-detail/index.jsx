@@ -163,7 +163,6 @@ function OrderDetail({ orderId, disable }) {
   };
 
   const handleSave = async () => {
-    // console.log(typeof data[0].medicine.id);
     const response = await myAxios.post(`/prescription/${param.orderId}`, {
       prescriptionItems: data,
     });

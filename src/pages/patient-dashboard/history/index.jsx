@@ -21,14 +21,11 @@ function History() {
 
   const deleteOrder = async () => {
     try {
-      // Gọi API để xóa đơn hàng theo selectedOrderId
       await myAxios.delete(`/order/${selectedOrderId}`);
-      // Cập nhật lại danh sách đơn hàng sau khi xóa
       const response = await myAxios.get(`/order/${userInformation?.id}`);
       setOrders(response.data.data);
       setIsModalVisible(false);
     } catch (error) {
-      // Xử lý lỗi nếu có
       console.error("Error deleting order:", error);
     }
   };

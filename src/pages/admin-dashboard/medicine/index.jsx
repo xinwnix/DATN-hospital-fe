@@ -153,7 +153,7 @@ function Medicine() {
           setShowConfirmButton(false);
         }}
       >
-        <Title style={{ fontSize: 20 }}>Bạn có muốn xóa thuốc này?</Title>
+        <Title style={{ fontSize: 20 }}>Bạn có muốn xóa thuốc "{service?.name}" này không?</Title>
       </Modal>
     </PageTemplate>
   );

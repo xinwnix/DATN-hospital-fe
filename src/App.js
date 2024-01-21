@@ -11,6 +11,7 @@ import Doctor from "./pages/admin-dashboard/doctor";
 import CheckCode from "./pages/check-code";
 import History from "./pages/patient-dashboard/history";
 import Order from "./pages/admin-dashboard/order";
+import PatientRecords from "./pages/admin-dashboard/patientrecords";
 import DoctorDashboard from "./pages/doctor-dashboard";
 import Schedule from "./pages/doctor-dashboard/schedule";
 import OrderDetail from "./pages/doctor-dashboard/order-detail";
@@ -20,6 +21,7 @@ import Service from "./pages/admin-dashboard/service";
 import Medicine from "./pages/admin-dashboard/medicine";
 import Statistical from "./pages/admin-dashboard/statistical";
 import ForgetPassword from "./pages/forget-password";
+
 
 function App() {
   const { contextHolder } = useNotification();
@@ -39,8 +41,10 @@ function App() {
           <Route path="history" element={<History />}></Route>
           <Route path="health" element={<HealthRecord />}></Route>
         </Route>
+
         <Route path="admin" element={<AdminDashboard />}>
           <Route path="user" element={<User />}></Route>
+          <Route path="patientrecords" element={<PatientRecords />}></Route>
           <Route path="doctor" element={<Doctor />}></Route>
           <Route path="order" element={<Order />}></Route>
           <Route path="facility" element={<Facility />}></Route>

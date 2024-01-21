@@ -3,7 +3,7 @@ import PageTemplate from "../../../template/page-template";
 import myAxios from "../../../config/config";
 import ManageTemplate from "../../../template/manage-template";
 import { formatDate } from "../../../utils/date-time";
-import { Button, Input, Space, notification } from "antd";
+import { Button, Input, Space, notification, Modal } from "antd";
 import { renderTag } from "../../../utils/label";
 
 import "./index.scss"
@@ -11,6 +11,9 @@ import "./index.scss"
 function Order() {
   const [order, setOrder] = useState([]);
   const [api, context] = notification.useNotification();
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  const [actionType, setActionType] = useState("");
+  const [recordToUpdate, setRecordToUpdate] = useState(null);
   useEffect(() => {
     const fetch = async () => {
       const response = await myAxios.get("/order");
@@ -19,6 +22,32 @@ function Order() {
 
     fetch();
   }, []);
+
+  const showConfirmModal = (record, type) => {
+    setActionType(type);
+    setRecordToUpdate(record);
+    setConfirmModalVisible(true);
+  };
+
+  const handleConfirmModalOk = async () => {
+    const response = await myAxios.patch(`/order/${recordToUpdate.id}/${actionType === "approve" ? "IN_PROCESS" : "REJECT"}`);
+    api.success({
+      message: response.data.message,
+    });
+    setOrder(
+      order.map((item) => {
+        if (item.id === response.data.data.id) {
+          item = response.data.data;
+        }
+        return item;
+      })
+    );
+    setConfirmModalVisible(false);
+  };
+
+  const handleConfirmModalCancel = () => {
+    setConfirmModalVisible(false);
+  };
 
   const columns = [
     {
@@ -95,44 +124,10 @@ function Order() {
         <Space size="middle">
           {record.status === "CONFIRM" && (
             <>
-              <Button
-                onClick={async () => {
-                  const response = await myAxios.patch(`/order/${record.id}/IN_PROCESS`);
-                  api.success({
-                    message: response.data.message,
-                  });
-                  setOrder(
-                    order.map((item) => {
-                      if (item.id === response.data.data.id) {
-                        item = response.data.data;
-                      }
-                      return item;
-                    })
-                  );
-                }}
-                type="primary"
-              >
+              <Button onClick={() => showConfirmModal(record, "approve")} type="primary">
                 Duyệt
               </Button>
-              <Button
-                danger
-                onClick={async () => {
-                  const response = await myAxios.patch(`/order/${record.id}/REJECT`);
-                  api.success({
-                    message: response.data.message,
-                  });
-                  setOrder(
-                    order.map((item) => {
-                      if (item.id === response.data.data.id) {
-                        item = response.data.data;
-                      }
-
-                      return item;
-                    })
-                  );
-                }}
-                type="primary"
-              >
+              <Button danger onClick={() => showConfirmModal(record, "reject")} type="primary">
                 Hủy
               </Button>
             </>
@@ -147,6 +142,17 @@ function Order() {
       {context}
       <ManageTemplate title="yêu cầu" columns={columns} dataSource={order} hideAddButton>
       </ManageTemplate>
+
+      <Modal
+        visible={confirmModalVisible}
+        onOk={handleConfirmModalOk}
+        onCancel={handleConfirmModalCancel}
+        title={`Xác nhận ${actionType === "approve" ? "Duyệt" : "Hủy"}`}
+        okText ="Xác nhận"
+        cancelText="Hủy"
+      >
+        {`Bạn có chắc chắn muốn ${actionType === "approve" ? "duyệt" : "hủy"} yêu cầu này không?`}
+      </Modal>
     </PageTemplate>
   );
 }

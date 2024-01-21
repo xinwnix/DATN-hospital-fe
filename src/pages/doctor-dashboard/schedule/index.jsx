@@ -50,8 +50,8 @@ function Schedule() {
             <Link to={`${event.id}`}>{event?.patient?.fullName || "-"}</Link>
           </Tooltip>
         ),
-        patient: event?.patient, // Bổ sung thông tin bệnh nhân vào đây
-        testDate: event.testDate // Bổ sung thông tin testDate vào đây
+        patient: event?.patient,
+        testDate: event.testDate
       };
     });
 
@@ -76,7 +76,6 @@ function Schedule() {
   };
 
   const dateCellRender = (value) => {
-    // ẩn lịch của ngày trước đó
     if (value.isBefore(today, 'day')) {
       return null; 
     }
